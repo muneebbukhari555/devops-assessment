@@ -7,6 +7,10 @@ jobs:
       id-token: write
       contents: read
     steps:
+      # Checkout Code
+      - name: Get code
+        uses: actions/checkout@v3
+
       # AWS Authentication
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
