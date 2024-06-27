@@ -1,5 +1,9 @@
 name: Java Web App Build and deploy to EKS
 on: [push, workflow_dispatch]
+env:
+  ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,29 +14,32 @@ jobs:
       # Checkout Code
       - name: Get code
         uses: actions/checkout@v3
+      
+      - name: Get short SHA
+        id: commit
+        run: echo "::set-output name=sha7::${GITHUB_SHA::7}"
 
       # AWS Authentication
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_Role
-          aws-region: us-east-1
+          aws-region: ${{env.AWS_REGION}}
       
       # Login in Amazon ECR
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       
-      - name: Get short SHA
-        id: slug
-        run: echo "::set-output name=sha7::${GITHUB_SHA::7}"
-      
       # Build, tag, and push docker image to Amazon ECR
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ secrets.ECR_REPO }}
-          IMAGE_TAG: ${{ steps.slug.outputs.sha7 }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ steps.commit.outputs.sha7 }}
         run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest -f java-web-app/Dockerfile java-web-app/
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f java-web-app/Dockerfile java-web-app/
+
+          docker push $REGISTRY/$REPOSITORY:latest
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
