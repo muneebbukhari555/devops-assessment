@@ -23,12 +23,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha7::${GITHUB_SHA::7}"
+      
       # Build, tag, and push docker image to Amazon ECR
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ secrets.ECR_REPO }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ steps.slug.outputs.sha7 }}
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f java-web-app/Dockerfile java-web-app/
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
