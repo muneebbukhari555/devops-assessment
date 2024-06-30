@@ -6,9 +6,9 @@ usage() {
   echo '  -i                Use to Install Kubectl, AWS CLI, Helm to interact with k8s API' >&2
   echo '  -s                Use to deploy Ingress Controller, certificate Manager for expose and use TLS communication' >&2
   echo '  -g                Use to deploy ARC Action Runner Controller' >&2
-  echo '  -c                Target Cluster Name to deploy App' >&2
+  echo '  -c                Target Cluster Name e.g rak-prod-eksdemo' >&2
   echo '  -r                Target Cluster Region Name' >&2
-  echo '  -a                Use to deploy Java Web App in the cluster' >&2
+  echo '  -a                Application Name e.g -a java-web-app. Use to deploy Java Web App in the cluster' >&2
   exit 1
 }
 
@@ -184,5 +184,5 @@ then
   echo 'Utilities are Installing'
   namespace=${app_name}
   kubectl create ns ${namespace}
-  helm upgrade --install ${app_name} helm_chart/${app_name} -n ${namespace}
+  helm upgrade --install ${app_name} ./helm_chart/${app_name} -n ${namespace}
 fi
