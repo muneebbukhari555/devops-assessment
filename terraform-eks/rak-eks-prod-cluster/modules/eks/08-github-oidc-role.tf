@@ -65,7 +65,7 @@ resource "aws_iam_role" "github_actions_role" {
           Sid    = "AllowEKSClusterAccess"
           Effect = "Allow"
           Action = "eks:DescribeCluster"
-          Resource = "arn:aws:eks:us-east-1:637423397994:cluster/rak-prod-eksdemo"
+          Resource = "arn:aws:eks:us-east-1:637423397994:cluster/${var.cluster_name}"
         }
       ]
     })

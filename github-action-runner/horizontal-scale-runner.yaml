@@ -13,4 +13,4 @@ spec:
   metrics:
   - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
     repositoryNames:
-    - muneebbukhari555/<REPO_NAME>
+    - muneebbukhari555/*
