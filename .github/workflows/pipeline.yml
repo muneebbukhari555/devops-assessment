@@ -3,6 +3,7 @@ on: [push, workflow_dispatch]
 env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
+  EKS_Cluster_Name: rak-prod-eksdemo
 
 jobs:
   build:
@@ -42,3 +43,12 @@ jobs:
 
           docker push $REGISTRY/$ECR_REPOSITORY:latest
           docker push $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      
+      # Deploying latest image to EKS Cluster
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{env.EKS_Cluster_Name}} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS
+        run: |
+          kubectl get pods -n actions

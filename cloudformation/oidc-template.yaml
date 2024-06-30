@@ -53,6 +53,11 @@ Resources:
                   - "ecr:CompleteLayerUpload"
                   - "ecr:GetAuthorizationToken"
                 Resource: "*"
+              - Sid: "AllowEKSClusterAccess"
+                Effect: Allow
+                Action:
+                  - "eks:DescribeCluster"
+                Resource: "arn:aws:eks:us-east-1:637423397994:cluster/rak-prod-eksdemo"
 
 
   # This is the OIDC provider hookup itself. This tells AWS to delegate authN GitHub
