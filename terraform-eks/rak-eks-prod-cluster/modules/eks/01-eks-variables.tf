@@ -41,7 +41,10 @@ variable "cluster_endpoint_public_access" {
 variable "name_prefix" {
   description = "Common name prefix for resources"
 }
-
+variable "aws_ecr_repository" {
+  description = "AWS ECR Repo for App Images"
+  type = string
+}
 # EKS Node Group Variables
 ## Placeholder space you can create if required
 

@@ -80,6 +80,10 @@ variable "cluster_endpoint_private_access" {
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled."
   type        = bool
 }
+variable "aws_ecr_repository" {
+  description = "AWS ECR Repo for App Images"
+  type = string
+}
 # EKS Node Group Variables
 
 variable "ng_instance_type" {

@@ -28,3 +28,12 @@ resource "aws_eks_cluster" "eks_cluster" {
     aws_iam_role_policy_attachment.eks-AmazonEKSVPCResourceController,
   ]
 }
+
+resource "aws_ecr_repository" "ecr_repo" {
+  name                 = var.aws_ecr_repository 
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
