@@ -45,6 +45,11 @@ variable "aws_ecr_repository" {
   description = "AWS ECR Repo for App Images"
   type = string
 }
+variable "repository_name" {
+  description = "The name of the GitHub repository"
+  type        = string
+  default     = "organization/*"
+}
 # EKS Node Group Variables
 ## Placeholder space you can create if required
 

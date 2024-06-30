@@ -31,3 +31,4 @@ scaling_desired_size            = 1
 scaling_min_size                = 1
 scaling_max_size                = 2
 aws_ecr_repository              = "java-web-app"
+repository_name                  = "muneebbukhari555/*"

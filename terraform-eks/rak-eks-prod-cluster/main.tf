@@ -42,4 +42,5 @@ module "eks" {
   scaling_min_size                = var.scaling_min_size
   k8s_access_role                 = var.k8s_access_role
   aws_ecr_repository              = var.aws_ecr_repository
+  repository_name                 = var.repository_name
 }
