@@ -1,0 +1,62 @@
+name: Java Web App Build and deploy to EKS
+on:
+  push:
+    paths:
+      - "terraform-eks/rak-eks-demo-cluster/*"
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  TF_STATE_S3_BUCKET: rak-terraform-iaac-eks
+  TF_State_File_Key: "prod/rak-eks-demo.tfstate"
+  TF_STATE_DYNAMODB_TABLE: "prod-rak-eksdemo"
+defaults:
+  run:
+    shell: bash
+    working-directory: ./terraform-eks/rak-eks-prod-cluster
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      # Checkout Code
+      - name: Get code
+        uses: actions/checkout@v3
+      
+      # AWS Authentication
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_Infra_Role
+          aws-region: ${{env.AWS_REGION}}
+      - name: Setup Terraform with specified version on the runner
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt -check
+      - name: Terraform init
+        id: init
+        run: |
+          terraform init -reconfigure -backend-config="region=${{env.AWS_REGION}}" \
+            -backend-config="bucket=${{env.TF_STATE_S3_BUCKET}}" \
+            -backend-config="key=${{env.TF_State_File_Key}}" \
+            -backend-config="dynamodb_table=${{env.TF_STATE_DYNAMODB_TABLE}}"
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+      - name: Terraform plan
+        id: plan
+        run: terraform plan 
+        continue-on-error: true
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+      - name: Terraform Apply
+        run: terraform apply -auto-approve 

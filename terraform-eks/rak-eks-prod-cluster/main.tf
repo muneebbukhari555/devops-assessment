@@ -40,4 +40,5 @@ module "eks" {
   scaling_desired_size            = var.scaling_desired_size
   scaling_max_size                = var.scaling_max_size
   scaling_min_size                = var.scaling_min_size
+  k8s_access_role                 = var.k8s_access_role
 }

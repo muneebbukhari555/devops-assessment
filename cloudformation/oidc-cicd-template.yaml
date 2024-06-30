@@ -12,7 +12,7 @@ Resources:
   GitHubActionsRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: GitHub_Actions_Role
+      RoleName: GitHub_Actions_CICD_Role
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -58,14 +58,3 @@ Resources:
                 Action:
                   - "eks:DescribeCluster"
                 Resource: "arn:aws:eks:us-east-1:637423397994:cluster/rak-prod-eksdemo"
-
-
-  # This is the OIDC provider hookup itself. This tells AWS to delegate authN GitHub
-  GitHubActionsOidcProvider:
-    Type: AWS::IAM::OIDCProvider
-    Properties:
-      ClientIdList:
-        - sts.amazonaws.com
-      ThumbprintList:
-        - 6938fd4d98bab03faadb97b34396831e3780aea1
-      Url: https://token.actions.githubusercontent.com

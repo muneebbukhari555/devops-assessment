@@ -20,6 +20,7 @@ instance_keypair = "eks-terraform-key"
 
 ### EKS Cluster
 cluster_name                    = "eksdemo"
+k8s_access_role                 = "arn:aws:iam::637423397994:role/GitHub_Actions_CICD_Role"
 cluster_service_ipv4_cidr       = "172.20.0.0/16"
 cluster_version                 = "1.29"
 cluster_endpoint_private_access = true

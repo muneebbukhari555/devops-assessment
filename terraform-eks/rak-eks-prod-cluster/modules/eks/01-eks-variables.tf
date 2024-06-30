@@ -5,6 +5,10 @@ variable "cluster_name" {
   default     = "eks-demo"
 }
 
+variable "k8s_access_role" {
+  description = "Role can Admin the Cluster."
+  type        = string
+}
 variable "cluster_service_ipv4_cidr" {
   description = "service ipv4 cidr for the kubernetes cluster"
   type        = string
