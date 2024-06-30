@@ -24,3 +24,20 @@ module "bastian_host" {
   vpc_id           = module.vpc.vpc_id
   vpc_subnets      = module.vpc.public_subnets[0]
 }
+
+module "eks" {
+  source                          = "./modules/eks"
+  name_prefix                     = local.name
+  cluster_name                    = local.eks_cluster_name
+  cluster_service_ipv4_cidr       = var.cluster_service_ipv4_cidr
+  cluster_version                 = var.cluster_version
+  cluster_endpoint_private_access = var.cluster_endpoint_private_access
+  cluster_vpc_subnet              = module.vpc.private_subnets
+  ng_vpc_subnet                   = module.vpc.private_subnets
+  ng_instance_type                = var.ng_instance_type
+  ng_ami_type                     = var.ng_ami_type
+  ng_disk_size                    = var.ng_disk_size
+  scaling_desired_size            = var.scaling_desired_size
+  scaling_max_size                = var.scaling_max_size
+  scaling_min_size                = var.scaling_min_size
+}
