@@ -47,6 +47,10 @@ jobs:
       # Deploying latest image to EKS Cluster
       - name: Update kubeconfig
         run: |
+          apt install unzip -y
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
           aws eks update-kubeconfig --name ${{env.EKS_Cluster_Name}} --region ${{ env.AWS_REGION }}
 
       - name: Deploy to EKS
