@@ -1,0 +1,16 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: self-hosted-runner-autoscaler
+  namespace: actions
+spec:
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: k8s-runner-deployment
+  scaleDownDelaySecondsAfterScaleOut: 300
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
+    repositoryNames:
+    - muneebbukhari555/<REPO_NAME>
