@@ -82,7 +82,7 @@ variable "cluster_endpoint_private_access" {
 }
 variable "aws_ecr_repository" {
   description = "AWS ECR Repo for App Images"
-  type = string
+  type        = string
 }
 # EKS Node Group Variables
 
