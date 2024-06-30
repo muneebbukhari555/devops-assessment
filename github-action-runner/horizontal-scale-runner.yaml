@@ -13,4 +13,4 @@ spec:
   metrics:
   - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
     repositoryNames:
-    - muneebbukhari555/*
+    - muneebbukhari555/devops-assessment
