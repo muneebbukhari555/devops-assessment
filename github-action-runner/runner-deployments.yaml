@@ -1,0 +1,12 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: k8s-runner-deployment
+  namespace: actions
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: muneebbukhari555/<REPO_NAME>
+      labels:
+        - "eks_runner"
