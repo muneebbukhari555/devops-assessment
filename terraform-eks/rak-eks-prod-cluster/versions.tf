@@ -16,6 +16,7 @@ terraform {
   #   # For State Locking
   #   dynamodb_table = "prod-rakeksdemo"
   # }
+  backend "s3" {}
 }
 # Terraform Provider Block
 provider "aws" {
