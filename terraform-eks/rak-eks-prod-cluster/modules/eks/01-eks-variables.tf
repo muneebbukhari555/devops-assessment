@@ -5,6 +5,10 @@ variable "cluster_name" {
   default     = "eks-demo"
 }
 
+variable "k8s_access_role" {
+  description = "Role can Admin the Cluster."
+  type        = string
+}
 variable "cluster_service_ipv4_cidr" {
   description = "service ipv4 cidr for the kubernetes cluster"
   type        = string
@@ -37,7 +41,19 @@ variable "cluster_endpoint_public_access" {
 variable "name_prefix" {
   description = "Common name prefix for resources"
 }
-
+variable "aws_ecr_repository" {
+  description = "AWS ECR Repo for App Images"
+  type = string
+}
+variable "repository_name" {
+  description = "The name of the GitHub repository"
+  type        = string
+  default     = "organization/*"
+}
+variable "cluster_admin_user_arn" {
+  description = "ARN for the principal to auth agianst eks"
+  type        = string  
+}
 # EKS Node Group Variables
 ## Placeholder space you can create if required
 

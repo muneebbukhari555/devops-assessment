@@ -7,6 +7,6 @@ spec:
   replicas: 1
   template:
     spec:
-      repository: muneebbukhari555/<REPO_NAME>
+      repository: muneebbukhari555/devops-assessment
       labels:
         - "eks_runner"

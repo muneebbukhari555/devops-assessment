@@ -9,6 +9,10 @@ resource "aws_eks_cluster" "eks_cluster" {
     endpoint_private_access = var.cluster_endpoint_private_access
     endpoint_public_access  = var.cluster_endpoint_public_access
   }
+  access_config {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
+  }
 
   kubernetes_network_config {
     service_ipv4_cidr = var.cluster_service_ipv4_cidr
@@ -23,4 +27,13 @@ resource "aws_eks_cluster" "eks_cluster" {
     aws_iam_role_policy_attachment.eks-AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks-AmazonEKSVPCResourceController,
   ]
+}
+
+resource "aws_ecr_repository" "ecr_repo" {
+  name                 = var.aws_ecr_repository 
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }

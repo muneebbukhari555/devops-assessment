@@ -64,6 +64,10 @@ variable "cluster_name" {
   description = "Name of the EKS cluster. Also used as a prefix in names of related resources."
   type        = string
 }
+variable "k8s_access_role" {
+  description = "Role can Admin the Cluster."
+  type        = string
+}
 variable "cluster_service_ipv4_cidr" {
   description = "service ipv4 cidr for the kubernetes cluster"
   type        = string
@@ -75,6 +79,19 @@ variable "cluster_version" {
 variable "cluster_endpoint_private_access" {
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled."
   type        = bool
+}
+variable "aws_ecr_repository" {
+  description = "AWS ECR Repo for App Images"
+  type        = string
+}
+variable "repository_name" {
+  description = "The name of the GitHub repository"
+  type        = string
+  default     = "organization/*"
+}
+variable "cluster_admin_user_arn" {
+  description = "ARN for the principal to auth agianst eks"
+  type        = string
 }
 # EKS Node Group Variables
 

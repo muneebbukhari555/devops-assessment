@@ -3,6 +3,7 @@
 module "vpc" {
   source                                 = "./modules/vpc"
   vpc_name                               = var.vpc_name
+  aws_region                             = var.aws_region
   vpc_cidr_block                         = var.vpc_cidr_block
   vpc_public_subnets                     = var.vpc_public_subnets
   vpc_private_subnets                    = var.vpc_private_subnets
@@ -40,4 +41,8 @@ module "eks" {
   scaling_desired_size            = var.scaling_desired_size
   scaling_max_size                = var.scaling_max_size
   scaling_min_size                = var.scaling_min_size
+  k8s_access_role                 = var.k8s_access_role
+  aws_ecr_repository              = var.aws_ecr_repository
+  repository_name                 = var.repository_name
+  cluster_admin_user_arn          = var.cluster_admin_user_arn
 }

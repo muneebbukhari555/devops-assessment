@@ -4,4 +4,5 @@ HELP.md
 .vscode/
 .DS_Store
 
-terraform-eks/rak-eks-demo-cluster/.terraform*
+terraform-eks/rak-eks-prod-cluster/.terraform.lock.hcl
+terraform-eks/rak-eks-prod-cluster/.terraform
