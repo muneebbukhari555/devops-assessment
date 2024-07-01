@@ -1,9 +1,13 @@
 name: Java Web App Build and deploy to EKS
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
 env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   EKS_Cluster_Name: rak-prod-eksdemo
+  APP_NAME: java-web-app
 
 jobs:
   build:
@@ -61,4 +65,9 @@ jobs:
 
       - name: Deploy to EKS
         run: |
-          kubectl get pods -n actions
+          chmod + ./cluster_bootstrap_script.sh
+          helm upgrade --install ${{env.APP_NAME}} \
+          --namespace ${{env.EKS_Cluster_Name}} \
+          --create-namespace \
+          --./helm_chart/${{env.APP_NAME}}
+        

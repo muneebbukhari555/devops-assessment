@@ -22,6 +22,13 @@ resource "aws_iam_role" "github_actions_role" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
         }
+      },
+      {
+        Effect = "Allow"
+        Principal = {
+            AWS = var.cluster_admin_user_arn 
+        },
+        Action = "sts:AssumeRole"
       }
     ]
   })

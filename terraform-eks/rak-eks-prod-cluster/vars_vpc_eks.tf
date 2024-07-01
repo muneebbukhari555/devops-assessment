@@ -89,6 +89,10 @@ variable "repository_name" {
   type        = string
   default     = "organization/*"
 }
+variable "cluster_admin_user_arn" {
+  description = "ARN for the principal to auth agianst eks"
+  type        = string
+}
 # EKS Node Group Variables
 
 variable "ng_instance_type" {

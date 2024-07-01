@@ -1,5 +1,5 @@
 name: Java Web App Build and deploy to EKS
-on: push
+on: workflow_dispatch
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   TF_STATE_S3_BUCKET: rak-terraform-iaac-eks
@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy-infra:
+  destroy-infra:
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:

@@ -11,8 +11,8 @@ vpc_private_subnets                    = ["10.0.1.0/24", "10.0.2.0/24"]
 vpc_database_subnets                   = ["10.0.151.0/24", "10.0.152.0/24"]
 vpc_create_database_subnet_group       = true
 vpc_create_database_subnet_route_table = true
-vpc_enable_nat_gateway                 = true
-vpc_single_nat_gateway                 = true
+vpc_enable_nat_gateway                 = false
+vpc_single_nat_gateway                 = false
 
 ### Bastion Host
 instance_type    = "t2.medium"
@@ -20,7 +20,6 @@ instance_keypair = "eks-terraform-key"
 
 ### EKS Cluster
 cluster_name                    = "eksdemo"
-k8s_access_role                 = "arn:aws:iam::637423397994:role/GitHub_Actions_CICD_Role"
 cluster_service_ipv4_cidr       = "172.20.0.0/16"
 cluster_version                 = "1.29"
 cluster_endpoint_private_access = true
@@ -31,4 +30,6 @@ scaling_desired_size            = 1
 scaling_min_size                = 1
 scaling_max_size                = 2
 aws_ecr_repository              = "java-web-app"
-repository_name                  = "muneebbukhari555/*"
+repository_name                 = "muneebbukhari555/*"
+k8s_access_role                 = "arn:aws:iam::637423397994:role/GitHub_Actions_CICD_Role"
+cluster_admin_user_arn          = "arn:aws:iam::637423397994:user/devops"

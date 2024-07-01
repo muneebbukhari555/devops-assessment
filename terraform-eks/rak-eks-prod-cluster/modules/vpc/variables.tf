@@ -6,7 +6,12 @@ variable "vpc_name" {
   type        = string
   default     = "myvpc"
 }
-
+# Region Name
+variable "aws_region" {
+  description = "Region in which AWS Resources to be created"
+  type        = string
+  default     = "us-east-1"
+}
 # VPC CIDR Block
 variable "vpc_cidr_block" {
   description = "VPC CIDR Block"
