@@ -5,8 +5,8 @@ variable "cluster_name" {
   default     = "eks-demo"
 }
 
-variable "k8s_access_role" {
-  description = "Role can Admin the Cluster."
+variable "github_access_role_name" {
+  description = "Role can access the Cluster."
   type        = string
 }
 variable "cluster_service_ipv4_cidr" {
@@ -15,7 +15,7 @@ variable "cluster_service_ipv4_cidr" {
   default     = null
 }
 
-variable "cluster_vpc_subnet" {
+variable "private_subnets" {
   description = "Target VPC subnet for cluster to be deployed"
   type        = list(string)
 }
@@ -51,7 +51,7 @@ variable "repository_name" {
   default     = "organization/*"
 }
 variable "cluster_admin_user_arn" {
-  description = "ARN for the principal to auth agianst eks"
+  description = "ARN for the Admin principal to auth agianst eks"
   type        = string  
 }
 # EKS Node Group Variables
@@ -74,12 +74,11 @@ variable "ng_disk_size" {
   type        = string
   default     = "20"
 }
-variable "ng_vpc_subnet" {
-  description = "Target VPC subnet for cluster to be deployed"
-  type        = list(string)
-}
+
 variable "scaling_desired_size" {}
 
 variable "scaling_max_size" {}
 
 variable "scaling_min_size" {}
+
+variable "common_tags" {}

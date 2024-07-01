@@ -7,8 +7,9 @@ usage() {
   echo '  -s                Use to deploy Ingress Controller, certificate Manager for expose and use TLS communication' >&2
   echo '  -g                Use to deploy ARC Action Runner Controller' >&2
   echo '  -c                Target Cluster Name e.g rak-prod-eksdemo' >&2
-  echo '  -r                Target Cluster Region Name' >&2
+  echo '  -l                Target Cluster Region Name' >&2
   echo '  -a                Application Name e.g -a java-web-app. Use to deploy Java Web App in the cluster' >&2
+  echo '  -r                Assume Role ARN to get login into AWS and execute the script' >&2
   exit 1
 }
 
@@ -45,8 +46,11 @@ do
     c)
       EKS_CLUSTER_NAME=${OPTARG}
       ;;
-    r)
+    l)
       AWS_REGION=${OPTARG}
+      ;;
+    r)
+      AWS_ROLE_ARN=${OPTARG}
       ;;
     \?)  
       usage
@@ -59,7 +63,7 @@ echo "Region: $AWS_REGION"
 echo "EKS Cluster: $EKS_CLUSTER_NAME"
 
 # Assume the IAM role and export the temporary credentials
-ROLE_ARN="arn:aws:iam::637423397994:role/GitHub_Actions_CICD_Role"
+ROLE_ARN=AWS_ROLE_ARN #"arn:aws:iam::637423397994:role/GitHub_Actions_CICD_Role"
 SESSION_NAME="AssumeGitHubActionsRoleSession"
 
 TEMP_CREDENTIALS=$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name $SESSION_NAME)
