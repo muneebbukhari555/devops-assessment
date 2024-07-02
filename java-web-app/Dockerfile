@@ -6,7 +6,7 @@ WORKDIR /home/app/
 
 COPY . /home/app/
 
-RUN mvn clean package -DskipTests=true
+RUN mvn clean package
 
 # Package Stage Use a base image with Java runtime
 FROM openjdk:21-slim
