@@ -62,6 +62,11 @@ jobs:
 
       - name: Deploy to EKS
         run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+          sed -i.bak "s|IMAGE_TAG|$IMAGE_TAG|g" helm_chart/java-web-app/values.yaml
           helm upgrade --install ${{env.APP_NAME}} \
           --namespace ${{env.EKS_Cluster_Name}} \
           --create-namespace \

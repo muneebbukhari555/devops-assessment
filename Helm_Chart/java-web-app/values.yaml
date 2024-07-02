@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: 637423397994.dkr.ecr.us-east-1.amazonaws.com/java-web-app #Docker_Image
+  repository: 6374239794.dkr.ecr.us-east-1.amazonaws.com/java-web-app #Docker_Image
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 47e7862 #TAG
+  tag: IMAGE_TAG
 
 imagePullSecrets: []
 nameOverride: ""
@@ -40,19 +40,25 @@ service:
 
 ingress:
   enabled: true
-  className: ""
+  className: "rak-ingress"
   annotations:
-    alb.ingress.kubernetes.io/load-balancer-name: ingress-basics
+    alb.ingress.kubernetes.io/load-balancer-name: ingress-java-web-app
     alb.ingress.kubernetes.io/scheme: internet-facing
     # Health Check Settings
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
-    alb.ingress.kubernetes.io/healthcheck-path: /index.html
+    alb.ingress.kubernetes.io/healthcheck-path: /app
     alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
     alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
     alb.ingress.kubernetes.io/success-codes: '200'
     alb.ingress.kubernetes.io/healthy-threshold-count: '2'
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+    ## SSL Settings
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:637423397994:certificate/04b7c3cb-336c-4fff-8927-121d119d6656
+    #alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01 #Optional (Picks default if not used)    
+    # SSL Redirect Setting
+    alb.ingress.kubernetes.io/ssl-redirect: '443'   
   hosts:
     - host: app.digitaldense.com
       paths:
