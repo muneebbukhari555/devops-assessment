@@ -1,0 +1,21 @@
+image:
+  repository: 602401143452.dkr.ecr.us-east-1.amazonaws.com/amazon/aws-load-balancer-controller
+  tag: v2.8.1
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::637423397994:role/rak-prod-eksdemo-lbc-iam-role"
+
+  # The name of the service account to use.
+  name: aws-load-balancer-controller
+
+  # Automount API credentials for a Service Account.
+  automountServiceAccountToken: true
+
+clusterName: "rak-prod-eksdemo"
+region: "us-east-1"
+vpcId: "vpc-0c29fe499e3c31eee"
