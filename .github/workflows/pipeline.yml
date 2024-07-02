@@ -1,5 +1,8 @@
 name: Java Web App Build and deploy to EKS
-on: push
+on:
+  push:
+    branches:
+      - main
 env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
   AWS_REGION: ${{ secrets.AWS_REGION }}

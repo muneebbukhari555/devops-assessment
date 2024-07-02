@@ -4,7 +4,6 @@ usage() {
   echo "Usage: ./cluster_bootstrap_script.sh [options]"
   echo "Options:"
   echo '  -i                To Install Kubectl, AWS CLI, Helm to interact with k8s API' >&2
-  echo '  -s                To deploy Ingress Controller, certificate Manager for expose and use TLS communication' >&2
   echo '  -g                To deploy ARC Action Runner Controller' >&2
   echo '  -a                Application Name e.g -a java-web-app. To deploy Application in the cluster' >&2
   exit 1
@@ -24,17 +23,13 @@ then
 fi
 
 # Read parameters required
-while getopts isga:c:r:l: OPTION
+while getopts iag OPTION
 do
   case ${OPTION} in
     i)
       utilities=true
       ;;
-    s)
-      Ingress_CertManger=true
-      ;;
     a)  
-      app_name=${OPTARG}
       deploy_app=true
       ;;
     g)
@@ -76,7 +71,7 @@ then
 fi
 
 ############################################# Configuring Authentication for AWS using Temporary Creds
-if [[ ${Ingress_CertManger} = 'true' || ${github_runner} = 'true' || ${deploy_app} = 'true' ]]
+if [[ ${github_runner} = 'true' || ${deploy_app} = 'true' ]]
 then
   read -p "Please Provide AWS Region: " AWS_REGION
   read -p "Please Provide Target Cluster Name: " EKS_CLUSTER_NAME
@@ -109,20 +104,6 @@ then
   fi
 fi
 
-#############################################Installing Certificate Manager and Ingress for Exposing App
-if [[ ${Ingress_CertManger} = 'true' ]]
-then
-  # Log into the Cluster
-  aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
-  if [[ "${?}" -ne 0 ]]
-  then
-    echo "Cluster Authentication failed" >&2
-    exit 1
-  fi
-  
-
-  
-fi
 
 ############################################# Installing Action Runnder Controller 
 if [[ ${github_runner} = 'true' ]]
@@ -158,7 +139,7 @@ then
   --namespace actions \
   --version 0.22.0 \
   --set syncPeriod=1m
-  sleep 20
+  sleep 15
 
   # Runner Deployment 
   kubectl apply -f github-action-runner/runner-deployments.yaml
@@ -168,6 +149,7 @@ fi
 ############################################# Deploy Web App 
 if [[ ${deploy_app} = 'true' ]]
 then
+  read -p "Please Provide App Name: " app_name
   # Log into the Cluster
   aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
   if [[ "${?}" -ne 0 ]]
