@@ -24,7 +24,15 @@ jobs:
           java-version: 21
           java-distribution: temurin
           maven-version: 3.9.8
-
+      
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+              
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots verify
         working-directory: java-web-app/
