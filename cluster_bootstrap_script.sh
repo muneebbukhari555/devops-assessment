@@ -46,7 +46,7 @@ do
   esac
 done
 
-##### Installing CLI Utlities in the cluster. ######
+############################################# Installing CLI Utlities in the cluster. 
 if [[ ${utilities} = 'true' ]]
 then
   log "Installing AWS CLI Version: v2"
@@ -75,7 +75,7 @@ then
   fi
 fi
 
-####### Configuring Authentication for AWS using Temporary Creds #########
+############################################# Configuring Authentication for AWS using Temporary Creds
 if [[ ${Ingress_CertManger} = 'true' || ${github_runner} = 'true' || ${deploy_app} = 'true' ]]
 then
   read -p "Please Provide AWS Region: " AWS_REGION
@@ -109,7 +109,7 @@ then
   fi
 fi
 
-######Installing Certificate Manager and Ingress for Exposing App######
+#############################################Installing Certificate Manager and Ingress for Exposing App
 if [[ ${Ingress_CertManger} = 'true' ]]
 then
   # Log into the Cluster
@@ -119,14 +119,24 @@ then
     echo "Cluster Authentication failed" >&2
     exit 1
   fi
-  log "######Installing Ingress for Exposing App######"
-  helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-  helm repo update
-  helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
-  --namespace cert-manager \
-  --create-namespace \
-  --version=4.9.0 
+  
 
+  
+fi
+
+############################################# Installing Action Runnder Controller 
+if [[ ${github_runner} = 'true' ]]
+then
+  
+  ## Log into the Cluster
+  aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "Cluster Authentication failed" >&2
+    exit 1
+  fi
+
+  ### Deploying CertManager for TLS Communication
   log "Installing CertManager for TLS Communication"
   helm repo add jetstack https://charts.jetstack.io --force-update
   helm repo update
@@ -136,40 +146,26 @@ then
   --create-namespace\
   --version v1.14.0\
   --set installCRDs=true
-fi
 
-###### Installing Action Runnder Controller ######
-if [[ ${github_runner} = 'true' ]]
-then
-  
-  # Log into the Cluster
-  aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
-  if [[ "${?}" -ne 0 ]]
-  then
-    echo "Cluster Authentication failed" >&2
-    exit 1
-  fi
-  #Creation Secrets in k8s cluster
+  ### Deploying ARC Github Runner
   kubectl create ns actions
   kubectl apply -f github-action-runner/runner-secret.yaml
 
-  # Adding Helm Repo 
   helm repo add actions-runner-controller https://actions-runner-controller.github.io/actions-runner-controller
   helm repo update
-  # ARC HELM CMD
   helm install \
   actions-runner-controller actions-runner-controller/actions-runner-controller \
   --namespace actions \
   --version 0.22.0 \
   --set syncPeriod=1m
-  
   sleep 20
+
   # Runner Deployment 
   kubectl apply -f github-action-runner/runner-deployments.yaml
   kubectl apply -f github-action-runner/horizontal-scale-runner.yaml
 fi
 
-###### Deploy Web App ######
+############################################# Deploy Web App 
 if [[ ${deploy_app} = 'true' ]]
 then
   # Log into the Cluster
@@ -179,7 +175,12 @@ then
     echo "Cluster Authentication failed" >&2
     exit 1
   fi
-  echo 'Utilities are Installing'
+  ######## Deploying AWS Load Balancer Controller
+  helm repo add eks https://aws.github.io/eks-charts
+  helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller -f ingress-nginx/aws-alb-ingress.yaml -n kube-system
+  kubectl apply -f ingress-nginx/ingress-class.yaml
+
+  echo 'Deploying Web App'
   namespace=${app_name}
   kubectl create ns ${namespace}
   helm upgrade --install ${app_name} ./helm_chart/${app_name} -n ${namespace}
