@@ -27,6 +27,7 @@ jobs:
 
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots verify
+        working-directory: java-web-app/
       
       - name: Get short SHA
         id: commit
