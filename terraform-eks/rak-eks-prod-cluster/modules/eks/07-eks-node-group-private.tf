@@ -3,7 +3,7 @@ resource "aws_eks_node_group" "eks_ng_private" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "${var.cluster_name}-ng-private"
   node_role_arn   = aws_iam_role.eks_nodegroup_role.arn
-  subnet_ids      = var.ng_vpc_subnet
+  subnet_ids      = var.private_subnets
   version         = var.cluster_version #(Optional: Defaults to EKS Cluster Kubernetes version)    
 
   ami_type       = var.ng_ami_type
@@ -16,7 +16,7 @@ resource "aws_eks_node_group" "eks_ng_private" {
     min_size     = var.scaling_min_size
     max_size     = var.scaling_max_size
   }
-
+  
   # Desired max percentage of unavailable worker nodes during node group update.
   update_config {
     max_unavailable = 1

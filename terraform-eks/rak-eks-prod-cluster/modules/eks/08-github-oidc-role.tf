@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_iam_role" "github_actions_role" {
-  name = "GitHub_Actions_CICD_Role"
+  name = var.github_access_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

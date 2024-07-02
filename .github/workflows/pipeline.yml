@@ -19,17 +19,36 @@ jobs:
     steps:
       # Checkout Code
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+              
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.14.0
+        with:
+          java-version: 21
+          java-distribution: temurin
+          maven-version: 3.9.8
+      
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+              
+      - name: Run the Maven verify phase
+        run: mvn --batch-mode --update-snapshots verify
+        working-directory: java-web-app/
       
       - name: Get short SHA
         id: commit
         run: echo "::set-output name=sha7::${GITHUB_SHA::7}"
-
-      # AWS Authentication
+      
+        # AWS Authentication
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_Role
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_CICD_Role
           aws-region: ${{env.AWS_REGION}}
       
       # Login in Amazon ECR
@@ -64,10 +83,16 @@ jobs:
           aws eks update-kubeconfig --name ${{env.EKS_Cluster_Name}} --region ${{ env.AWS_REGION }}
 
       - name: Deploy to EKS
+        env:
+          IMAGE_TAG: ${{ steps.commit.outputs.sha7 }}
         run: |
-          chmod + ./cluster_bootstrap_script.sh
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+          sed -i.bak "s|IMAGE_TAG|$IMAGE_TAG|g" Helm_Chart/${{env.APP_NAME}}/values.yaml
           helm upgrade --install ${{env.APP_NAME}} \
-          --namespace ${{env.EKS_Cluster_Name}} \
+          --namespace ${{env.APP_NAME}} \
           --create-namespace \
-          --./helm_chart/${{env.APP_NAME}}
+          ./Helm_Chart/${{env.APP_NAME}}
         

@@ -33,16 +33,16 @@ module "eks" {
   cluster_service_ipv4_cidr       = var.cluster_service_ipv4_cidr
   cluster_version                 = var.cluster_version
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
-  cluster_vpc_subnet              = module.vpc.private_subnets
-  ng_vpc_subnet                   = module.vpc.private_subnets
+  private_subnets                 = module.vpc.private_subnets
   ng_instance_type                = var.ng_instance_type
   ng_ami_type                     = var.ng_ami_type
   ng_disk_size                    = var.ng_disk_size
   scaling_desired_size            = var.scaling_desired_size
   scaling_max_size                = var.scaling_max_size
   scaling_min_size                = var.scaling_min_size
-  k8s_access_role                 = var.k8s_access_role
+  github_access_role_name         = var.github_access_role_name
   aws_ecr_repository              = var.aws_ecr_repository
   repository_name                 = var.repository_name
   cluster_admin_user_arn          = var.cluster_admin_user_arn
+  common_tags                     = local.common_tags
 }

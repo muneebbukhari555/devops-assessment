@@ -1,4 +1,4 @@
-########## VPC Input Variables ##########
+##################################################### VPC Input Variables 
 # VPC Name
 variable "vpc_name" {
   description = "VPC Name"
@@ -45,7 +45,7 @@ variable "vpc_single_nat_gateway" {
   type        = bool
 }
 
-########## Public EC2 Instances - Bastion Host ##########
+##################################################### Public EC2 Instances - Bastion Host 
 # ec2_bastion_public_instance_type
 variable "instance_type" {
   description = "EC2 Instance Type"
@@ -57,15 +57,15 @@ variable "instance_keypair" {
   type        = string
 }
 
-########## EKS Cluster - Input Variables ##########
+##################################################### EKS Cluster - Input Variables 
 
 # EKS Cluster Input Variables
 variable "cluster_name" {
   description = "Name of the EKS cluster. Also used as a prefix in names of related resources."
   type        = string
 }
-variable "k8s_access_role" {
-  description = "Role can Admin the Cluster."
+variable "github_access_role_name" {
+  description = "Role can access the Cluster."
   type        = string
 }
 variable "cluster_service_ipv4_cidr" {
@@ -93,7 +93,8 @@ variable "cluster_admin_user_arn" {
   description = "ARN for the principal to auth agianst eks"
   type        = string
 }
-# EKS Node Group Variables
+
+##################################################### EKS Node Group Variables
 
 variable "ng_instance_type" {
   description = "EC2 Instance Type"
