@@ -61,6 +61,8 @@ jobs:
           aws eks update-kubeconfig --name ${{env.EKS_Cluster_Name}} --region ${{ env.AWS_REGION }}
 
       - name: Deploy to EKS
+        env:
+          IMAGE_TAG: ${{ steps.commit.outputs.sha7 }}
         run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
@@ -68,7 +70,7 @@ jobs:
 
           sed -i.bak "s|IMAGE_TAG|$IMAGE_TAG|g" Helm_Chart/${{env.APP_NAME}}/values.yaml
           helm upgrade --install ${{env.APP_NAME}} \
-          --namespace ${{env.EKS_Cluster_Name}} \
+          --namespace ${{env.APP_NAME}} \
           --create-namespace \
           ./Helm_Chart/${{env.APP_NAME}}
         
