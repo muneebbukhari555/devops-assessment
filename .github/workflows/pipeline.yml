@@ -66,9 +66,9 @@ jobs:
           chmod 700 get_helm.sh
           ./get_helm.sh
 
-          sed -i.bak "s|IMAGE_TAG|$IMAGE_TAG|g" Helm_Chart/java-web-app/values.yaml
+          sed -i.bak "s|IMAGE_TAG|$IMAGE_TAG|g" Helm_Chart/${{env.APP_NAME}}/values.yaml
           helm upgrade --install ${{env.APP_NAME}} \
           --namespace ${{env.EKS_Cluster_Name}} \
           --create-namespace \
-          --./helm_chart/${{env.APP_NAME}}
+          ./Helm_Chart/${{env.APP_NAME}}
         
