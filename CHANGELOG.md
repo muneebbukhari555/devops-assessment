@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/muneebbukhari555/devops-assessment/compare/v0.2.1...v0.3.0) (2024-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Putting image tag Dynamic for eks deployment
+
+### Features
+
+* Putting image tag Dynamic for eks deployment ([985271e](https://github.com/muneebbukhari555/devops-assessment/commit/985271e1df32f35cc794b2b16abc4be7d22e284f))
+
 ## [0.2.1](https://github.com/muneebbukhari555/devops-assessment/compare/v0.2.0...v0.2.1) (2024-07-03)
 
 
