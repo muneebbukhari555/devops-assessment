@@ -3,7 +3,7 @@ ingress:
   # Used to create an Ingress record.
   className: "ingress-external"
   annotations: 
-    alb.ingress.kubernetes.io/load-balancer-name: eks-ingress-external
+    alb.ingress.kubernetes.io/load-balancer-name: sonarqube-ingress-
     alb.ingress.kubernetes.io/scheme: internet-facing
     # Health Check Settings
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
