@@ -466,4 +466,3 @@ For Reference: https://www.conventionalcommits.org/en/v1.0.0/
   - **Build, tag, and push the image to Amazon ECR**: This step builds the Docker image, tags it, and pushes it to ECR.
   - **Update kube config**: Fetches the Kubernetes configuration to interact with the EKS cluster.
   - **Deploy to EKS**: This part of the script applies Kubernetes manifests to deploy the application in EKS using HELM. It replaces a placeholder (`IMAGE_TAG`) in the manifest with the actual image tag.
-
