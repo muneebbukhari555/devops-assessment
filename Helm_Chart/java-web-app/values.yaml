@@ -42,7 +42,7 @@ ingress:
   enabled: true
   className: "ingress-external"
   annotations:
-    alb.ingress.kubernetes.io/load-balancer-name: ingress-java-web-app
+    alb.ingress.kubernetes.io/load-balancer-name: java-web-app-ingress
     alb.ingress.kubernetes.io/scheme: internet-facing
     # Health Check Settings
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP

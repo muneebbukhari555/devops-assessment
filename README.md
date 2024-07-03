@@ -420,6 +420,12 @@ Script will ask for:
 3. Role ARN to Assume (arn:aws:iam::<Account_ID>>:role/GitHub_Actions_CICD_Role)
 4. Application Name   (In our case java-web-app)
 ```
+Create DNS Record for both services against HOSTNAME used in Ingress Section:
+- Sonarqube
+- Java-Web-App
+
+In Record target value provide alias for AWS Ingress LoadBalancer.
+
 **NOTE:** Initially Web APP will not get online as we don't have any registry image present in ECR. In step 4 we are going to use workflow to build and deploy Web APP Image.
 ## Step-04: Application CI/CD on EKS Cluster using GitHub Actions and Authenticate using RBAC and OIDC Provider
 
