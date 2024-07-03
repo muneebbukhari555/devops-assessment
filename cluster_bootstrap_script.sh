@@ -105,7 +105,7 @@ then
 fi
 
 
-############################################# Installing Action Runnder Controller 
+############################################# Installing Action Runner Controller SonarQube and Cert Manager
 if [[ ${github_runner} = 'true' ]]
 then
   
@@ -117,6 +117,17 @@ then
     exit 1
   fi
 
+  # Deploying SonarQube with Postgress 
+  helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+  helm repo update
+  kubectl create namespace sonarqube
+  helm upgrade --install sonarqube sonarqube/sonarqube -f sonarqube/values.yaml -n sonarqube
+
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "SonarQube Deployment failed" >&2
+    exit 1
+  fi
   ### Deploying CertManager for TLS Communication
   log "Installing CertManager for TLS Communication"
   helm repo add jetstack https://charts.jetstack.io --force-update
@@ -124,10 +135,15 @@ then
 
   helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
-  --create-namespace\
-  --version v1.14.0\
+  --create-namespace \
+  --version v1.14.0 \
   --set installCRDs=true
 
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "Cert Manager Deployment failed" >&2
+    exit 1
+  fi
   ### Deploying ARC Github Runner
   kubectl create ns actions
   kubectl apply -f github-action-runner/runner-secret.yaml

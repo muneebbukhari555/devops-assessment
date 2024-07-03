@@ -1,4 +1,4 @@
-name: Java Web App Build and deploy to EKS
+name: Provision Private EKS Cluser & AWS Resources
 on:
   push:
     branches:

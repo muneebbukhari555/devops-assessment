@@ -3,52 +3,39 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
+  # pull_request:
+  #   branches:
+  #     - 'master'
+
+
+# These permissions are needed to interact with GitHub's OIDC Token endpoint.
+permissions:
+  id-token: write
+  contents: read
+
 env:
-  ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  EKS_Cluster_Name: rak-prod-eksdemo
-  APP_NAME: java-web-app
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
+  EKS_Cluster_Name: ${{ secrets.EKS_Cluster_Name }}
+  APP_NAME: ${{ secrets.APP_NAME }}
+  ROLE_NAME: ${{ secrets.ROLE_NAME }}
 
 jobs:
   build:
     runs-on: eks_runner
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
-    permissions:
-      id-token: write
-      contents: read
     steps:
       # Checkout Code
       - name: Get code
         uses: actions/checkout@v4
-              
-      - name: Setup Maven Action
-        uses: s4u/setup-maven-action@v1.14.0
-        with:
-          java-version: 21
-          java-distribution: temurin
-          maven-version: 3.9.8
-      
-      - name: Cache Maven dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-              
-      - name: Run the Maven verify phase
-        run: mvn --batch-mode --update-snapshots verify
-        working-directory: java-web-app/
-      
-      - name: Get short SHA
-        id: commit
-        run: echo "::set-output name=sha7::${GITHUB_SHA::7}"
       
         # AWS Authentication
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_CICD_Role
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.ROLE_NAME }}
           aws-region: ${{env.AWS_REGION}}
       
       # Login in Amazon ECR
@@ -56,19 +43,30 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       
-      # Build, tag, and push docker image to Amazon ECR
-      - name: Build, tag, and push docker image to Amazon ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ steps.commit.outputs.sha7 }}
-        run: |
-          docker build -t $REGISTRY/$ECR_REPOSITORY:latest -f java-web-app/Dockerfile java-web-app/
-          docker build -t $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f java-web-app/Dockerfile java-web-app/
-
-          docker push $REGISTRY/$ECR_REPOSITORY:latest
-          docker push $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      # Docker Image MetaData    
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{steps.login-ecr.outputs.registry}}/${{env.ECR_REPOSITORY}}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
       
-      # Deploying latest image to EKS Cluster
+      # Build, tag, and push docker image to Amazon ECR
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{env.APP_NAME}}/
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # Updating Kube Config File for target cluster
       - name: Update kubeconfig
         run: |
           sudo apt install unzip -y
@@ -81,10 +79,11 @@ jobs:
           
           sudo ./aws/install
           aws eks update-kubeconfig --name ${{env.EKS_Cluster_Name}} --region ${{ env.AWS_REGION }}
-
+      
+      # Deploying latest image to EKS Cluster
       - name: Deploy to EKS
         env:
-          IMAGE_TAG: ${{ steps.commit.outputs.sha7 }}
+          IMAGE_TAG: ${{ steps.meta.outputs.tags }}
         run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
