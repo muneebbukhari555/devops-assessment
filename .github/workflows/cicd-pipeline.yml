@@ -1,8 +1,8 @@
 name: Java Web App Build and deploy to EKS
-on: push
-  # push:
-  #   tags:
-  #     - 'v*'
+on: 
+  push:
+    tags:
+      - 'v*'
 
 # These permissions are needed to interact with GitHub's OIDC Token endpoint.
 permissions:
@@ -18,7 +18,7 @@ env:
   ROLE_NAME: ${{ secrets.ROLE_NAME }}
 
 jobs:
-  build:
+  build_deploy:
     runs-on: eks_runner
     steps:
       # Checkout Code

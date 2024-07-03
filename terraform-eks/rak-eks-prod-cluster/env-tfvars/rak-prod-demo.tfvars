@@ -2,6 +2,7 @@
 aws_region       = "us-east-1"
 environment      = "prod"
 business_divsion = "rak"
+aws_accounr_id   = ""
 
 ### VPC Details
 vpc_name                               = "vpc"
@@ -32,4 +33,4 @@ scaling_max_size                = 2
 aws_ecr_repository              = "java-web-app"
 repository_name                 = "muneebbukhari555/*"
 github_access_role_name         = "GitHub_Actions_CICD_Role"
-cluster_admin_user_arn          = "arn:aws:iam::637423397994:user/devops"
+cluster_admin_user_arn          = "<Principal_ARN>" #Use for Admin access for EKS Cluster

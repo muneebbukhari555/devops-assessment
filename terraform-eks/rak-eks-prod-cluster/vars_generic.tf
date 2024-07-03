@@ -1,5 +1,9 @@
 # Input Variables
 # AWS Region
+variable "aws_accounr_id" {
+  description = "AWS Account ID"
+  type        = string
+}
 variable "aws_region" {
   description = "Region in which AWS Resources to be created"
   type        = string

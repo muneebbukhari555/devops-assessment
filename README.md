@@ -330,7 +330,7 @@ ingress:
   hosts:
     - name: <hostname>
       # Different clouds or configurations might need /* as the default path
-      path: /
+      path: /*
 
 service:
   type: NodePort
@@ -350,7 +350,7 @@ APP Helm Chart values.yaml file:
 replicaCount: 1
 
 image:
-  repository: 637423397994.dkr.ecr.us-east-1.amazonaws.com/java-web-app 
+  repository: <Account_ID>.dkr.ecr.us-east-1.amazonaws.com/java-web-app 
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: IMAGE_TAG 
@@ -410,31 +410,56 @@ Script will ask for:
 
 GitHub Action - It's a tool provided by GitHub to automate tasks in our software development workflow. We can use it to build, test, and deploy our code automatically whenever there are changes made to our GitHub repository. These automated tasks are defined using YAML files called workflows.
 
-Our GitHub CI/CD action workflow accomplishes several key tasks: 
+In this project, we are going to setup workflow with more secure way. For this I have created an Identity provider in AWS and assigned it a role with minimum policy needed for ECR and EKS. 
+- Every time our job runs, GitHub’s OIDC Provider auto-generates an OIDC token. Once the AWS successfully validates the claims presented in the token, it then provides a short-lived cloud access token that is available only for the duration of the job.
+- We dont need to store AWS credentials as a long-lived secret on Github which has access to all the resource in AWS.
+- We have granular control over providing access to cloud resources. With OIDC, AWS issues a short-lived access token that is only valid for a single job, and then automatically expires.
+
+
+GitHub CI/CD action workflow accomplishes several key tasks: 
 1. Testing and Building a Docker image, pushing it to the Amazon Elastic Container Registry (ECR)
 2. Deploying application to an Amazon Elastic Kubernetes Service (EKS) cluster
+
+For code quality we have integrated **SonarQube** with GitHub Actions CICD. SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution , SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects.
+
+https://github.com/marketplace/actions/official-sonarqube-scan
 
 
 
 GitHub Actions YAML file provided: (.github/workflow/cicd-pipeline.yml)
-The pipeline is designed generically and utilizes repository secrets to facilitate CI/CD for any application. It require Repo secrets as below:
+
+**Prerequisites**
+The pipeline is designed generically and utilizes repository secrets to facilitate CI/CD for application. 
+Required Repo secrets are:
 - AWS_ACCOUNT_ID
 - AWS_REGION
 - ECR_REPO
 - EKS_CLUSTER_NAME
 - APP_NAME
+- PAT
+- ROLE_NAME
+- SONAR_HOST_URL
+- SONAR_TOKEN
 
-GitHub Action Pipeline Workflow:
+To integrate SonarQube with GitHub Actions, we are going to:
+- Create Token in SonarQube to authenticate with GitHub Actions
+- Add Sonar Token, SonarQube URL as Secrets in GitHub Actions
+- Run Workflow in Self Hosted Runner
+- Verify scan report in SonarQube
 
+GitHub Action CICD Pipeline Workflow build and push Docker Image tags through Semantic Release. A separate workflow for maintaing semantic release is craeted other than main CI/CD pipeline.
 
-- **Trigger**: This GitHub Action is triggered when someone pushes to the "main" branch.
+- **Trigger**: This CICD Pipeline GitHub Action Workflow is triggered when release tags are pushed to the "main" branch.
 - **Environment Variables**: Defines environment variables like the ECR repository name, EKS cluster name, and AWS region.
 - **Jobs**: The “build” job is specified, which runs on the EKS Self Hosted Runner environment for better security control.
 - **Steps**: The steps within the job are as follows:
-  - **Set short git commit SHA:** This step retrieves the commit hash, which is used to tag the Docker image.
-  **Check out code**: The action checks out the code from the "master" branch into the EKS Runner environmenrt.
+  - **Check out code**: The action checks out the code from the "master" branch into the EKS Runner environmenrt.
+  - **Maven Build:** Add tasks for Maven build.
+  - **SonarQube** SonarQube Analysis
+  - **Buildx Stage** Building Docker Context
   - **Configure AWS credentials**: Configure AWS credentials using secrets from GitHub. This step will fetch secrets from GitHub by assuming AWS Role.
   - **Login to Amazon ECR**: Log in to the Amazon Elastic Container Registry using OIDC Role to push the Docker image.
+  - **Docker Image MetaData** Dynamically creating Image tag from MetaData using Semantic Versioning
   - **Build, tag, and push the image to Amazon ECR**: This step builds the Docker image, tags it, and pushes it to ECR.
   - **Update kube config**: Fetches the Kubernetes configuration to interact with the EKS cluster.
   - **Deploy to EKS**: This part of the script applies Kubernetes manifests to deploy the application in EKS using HELM. It replaces a placeholder (`IMAGE_TAG`) in the manifest with the actual image tag.

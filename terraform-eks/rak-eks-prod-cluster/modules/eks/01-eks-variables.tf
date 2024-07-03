@@ -5,6 +5,18 @@ variable "cluster_name" {
   default     = "eks-demo"
 }
 
+variable "aws_accounr_id" {
+  description = "AWS Account ID"
+  type        = string
+}
+
+# Region Name
+variable "aws_region" {
+  description = "Region in which AWS Resources to be created"
+  type        = string
+  default     = "us-east-1"
+}
+
 variable "github_access_role_name" {
   description = "Role can access the Cluster."
   type        = string
