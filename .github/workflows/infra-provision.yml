@@ -1,4 +1,4 @@
-name: Provision Private EKS Cluser & AWS Resources
+name: Provision Private EKS Cluser
 on:
   push:
     branches:
