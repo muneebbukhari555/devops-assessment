@@ -1,8 +1,8 @@
 name: Java Web App Build and deploy to EKS
-on:
-  push:
-    tags:
-      - 'v*'
+on: push
+  # push:
+  #   tags:
+  #     - 'v*'
 
 # These permissions are needed to interact with GitHub's OIDC Token endpoint.
 permissions:
@@ -25,6 +25,30 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4
       
+      # Installing JDK
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      # Building Mvn
+      - name: Build with Maven
+        run: mvn clean install -f ${{ secrets.APP_NAME }}/pom.xml
+      
+      # SonarQube Analysis
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: ${{ secrets.APP_NAME }}/
+          args: >
+            -Dsonar.organization=rak-org
+            -Dsonar.projectKey=${{ secrets.APP_NAME }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      
+      # Building Docker Context
       - name: Set up Docker Context for Buildx
         id: buildx-context
         run: |
