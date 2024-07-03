@@ -5,7 +5,7 @@ variable "cluster_name" {
   default     = "eks-demo"
 }
 
-variable "aws_accounr_id" {
+variable "aws_account_id" {
   description = "AWS Account ID"
   type        = string
 }

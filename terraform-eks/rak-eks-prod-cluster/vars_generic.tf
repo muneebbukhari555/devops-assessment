@@ -1,6 +1,6 @@
 # Input Variables
 # AWS Region
-variable "aws_accounr_id" {
+variable "aws_account_id" {
   description = "AWS Account ID"
   type        = string
 }

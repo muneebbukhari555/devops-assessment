@@ -4,5 +4,6 @@ HELP.md
 .vscode/
 .DS_Store
 
+# Terraform Module Dir
 terraform-eks/rak-eks-prod-cluster/.terraform.lock.hcl
 terraform-eks/rak-eks-prod-cluster/.terraform

@@ -2,7 +2,7 @@
 aws_region       = "us-east-1"
 environment      = "prod"
 business_divsion = "rak"
-aws_accounr_id   = ""
+aws_account_id   = ""
 
 ### VPC Details
 vpc_name                               = "vpc"

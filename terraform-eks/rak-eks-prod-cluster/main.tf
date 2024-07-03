@@ -44,7 +44,7 @@ module "eks" {
   aws_ecr_repository              = var.aws_ecr_repository
   repository_name                 = var.repository_name
   cluster_admin_user_arn          = var.cluster_admin_user_arn
-  aws_accounr_id                  = var.aws_accounr_id
+  aws_account_id                  = var.aws_account_id
   common_tags                     = local.common_tags
   aws_region                      = var.aws_region
 }
