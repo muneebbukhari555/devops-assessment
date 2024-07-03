@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/muneebbukhari555/devops-assessment/compare/v0.1.3...v0.1.4) (2024-07-03)
+
+
+### Bug Fixes
+
+* rearranging bash wrapper ([f0610cf](https://github.com/muneebbukhari555/devops-assessment/commit/f0610cfef7e409de3541b8bff9cbed6c68c28c12))
+
 ## [0.1.3](https://github.com/muneebbukhari555/devops-assessment/compare/v0.1.2...v0.1.3) (2024-07-03)
 
 
