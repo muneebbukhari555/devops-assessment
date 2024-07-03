@@ -447,9 +447,10 @@ To integrate SonarQube with GitHub Actions, we are going to:
 GitHub Action CICD Pipeline Workflow build and push Docker Image tags through Semantic Release. A separate workflow for maintaing semantic release is craeted other than main CI/CD pipeline.
 
 **Trigger**: The release-please workflow will run on every push to the main branch and handle version bumping and tagging based on your commit messages. Commit contains the following structural elements:
-  1. fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in Semantic Versioning).
-  2. feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in Semantic Versioning).
-  3. BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change
+  1. fix: which represents bug fixes, and correlates to a SemVer patch.
+  2. feat: which represents a new feature, and correlates to a SemVer minor.
+  3. feat!:, or fix!:, refactor!:, etc., which represent a breaking change (indicated by the !) and will result in a SemVer major.
+
 
 For Reference: https://www.conventionalcommits.org/en/v1.0.0/
 - **Environment Variables**: Defines environment variables like the ECR repository name, EKS cluster name, and AWS region.
