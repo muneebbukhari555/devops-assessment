@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/muneebbukhari555/devops-assessment/compare/v0.2.0...v0.2.1) (2024-07-03)
+
+
+### Bug Fixes
+
+* Adding image tag for eks deployment ([0f12176](https://github.com/muneebbukhari555/devops-assessment/commit/0f121766726e2fa0f367a332dcb465a62091c589))
+
 ## [0.2.0](https://github.com/muneebbukhari555/devops-assessment/compare/v0.1.4...v0.2.0) (2024-07-03)
 
 
