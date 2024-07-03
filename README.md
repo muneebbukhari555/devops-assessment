@@ -449,7 +449,12 @@ To integrate SonarQube with GitHub Actions, we are going to:
 
 GitHub Action CICD Pipeline Workflow build and push Docker Image tags through Semantic Release. A separate workflow for maintaing semantic release is craeted other than main CI/CD pipeline.
 
-- **Trigger**: This CICD Pipeline GitHub Action Workflow is triggered when release tags are pushed to the "main" branch.
+**Trigger**: The release-please workflow will run on every push to the main branch and handle version bumping and tagging based on your commit messages. Commit contains the following structural elements:
+  1. fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in Semantic Versioning).
+  2. feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in Semantic Versioning).
+  3. BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change
+
+For Reference: https://www.conventionalcommits.org/en/v1.0.0/
 - **Environment Variables**: Defines environment variables like the ECR repository name, EKS cluster name, and AWS region.
 - **Jobs**: The “build” job is specified, which runs on the EKS Self Hosted Runner environment for better security control.
 - **Steps**: The steps within the job are as follows:

@@ -56,10 +56,10 @@ jobs:
         run: terraform validate
       - name: Terraform plan
         id: plan
-        run: terraform plan -var-file=./env-tfvars/rak-prod-demo.tfvars
+        run: terraform plan -var-file=./env-tfvars/rak-prod-demo.tfvars -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}"
         continue-on-error: true
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
       - name: Terraform Apply
-        run: terraform apply -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve
+        run: terraform apply -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}"

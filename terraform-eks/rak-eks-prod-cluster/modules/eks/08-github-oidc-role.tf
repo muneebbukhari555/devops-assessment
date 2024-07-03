@@ -72,7 +72,7 @@ resource "aws_iam_role" "github_actions_role" {
           Sid    = "AllowEKSClusterAccess"
           Effect = "Allow"
           Action = "eks:DescribeCluster"
-          Resource = "arn:aws:eks:${aws_region}:${aws_accounr_id}:cluster/${var.cluster_name}"
+          Resource = "arn:aws:eks:${aws_region}:${aws_account_id}:cluster/${var.cluster_name}"
         }
       ]
     })
