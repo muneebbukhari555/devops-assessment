@@ -1,4 +1,4 @@
-name: Java Web App Build and deploy to EKS
+name: Java Web App
 on: 
   push:
     tags:

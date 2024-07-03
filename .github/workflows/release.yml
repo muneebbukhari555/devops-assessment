@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   release-please:
-    runs-on: eks_runner
+    runs-on: ubuntu-latest
     steps:
       - name: release-please
         id: release
