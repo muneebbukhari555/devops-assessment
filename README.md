@@ -44,8 +44,6 @@ For Detail Steps, please see pdf Documents located at: /doc
  
 Amazon Elastic Kubernetes Service (EKS) is a managed Kubernetes service that simplifies running Kubernetes on AWS by eliminating the need to install, operate, and maintain our own Kubernetes control plane or worker nodes. Deploying a private endpoint access for an EKS cluster includes the following steps:
 
-
-
 - Create the VPC endpoints in the VPC and the traffic to the control plane will transverse via AWS network. Control plane will be accessible only from the VPC or connected networks like other VPCs or corporate networks connected to your VPC via TGW, direct gateway etc. The control plane will not be accessible from public internet. So to connect with EKS we will deploying Bastion Host within the VPC.
 - Specify minimum 2 private subnets in distinct AZs. EKS provisions two Elastic Network Interfaces (ENIs) in distinct AZs in our VPC to facilitate communication from control plane to worker node components. These ENIs are placed in the private subnets while creating the EKS cluster. These ENIs are owned and controlled by EKS. The kubelet use this ENIs to communicate to the API server.
 - Amazon EKS worker nodes run in a VPC present in our AWS account . EKS managed worker nodes consists of a container runtime, kubelet and kube-proxy. The worker nodes can be placed in distinct AZs for high availability. Worker nodes and other services need connection to your cluster’s control plane use the API server  private endpoint and a certificate file that is created for cluster.
