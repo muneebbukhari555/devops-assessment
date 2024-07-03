@@ -45,6 +45,7 @@ jobs:
           args: >
             -Dsonar.organization=rak-org
             -Dsonar.projectKey=${{ secrets.APP_NAME }}
+            -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
