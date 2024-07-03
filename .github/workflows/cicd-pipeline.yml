@@ -61,7 +61,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{env.APP_NAME}}/ 
+          context: ${{env.APP_NAME}}/
+          file: ${{env.APP_NAME}}/Dockerfile 
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
