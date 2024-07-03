@@ -93,7 +93,6 @@ jobs:
           file: ${{env.APP_NAME}}/Dockerfile 
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
 
       # Updating Kube Config File for target cluster
       - name: Update kubeconfig
@@ -112,7 +111,7 @@ jobs:
       # Deploying latest image to EKS Cluster
       - name: Deploy to EKS
         env:
-          IMAGE_TAG: ${{ steps.meta.outputs.tags }}
+          IMAGE_TAG: ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
         run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
