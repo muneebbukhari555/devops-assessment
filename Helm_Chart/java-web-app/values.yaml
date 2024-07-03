@@ -40,7 +40,7 @@ service:
 
 ingress:
   enabled: true
-  className: "rak-ingress"
+  className: "ingress-external"
   annotations:
     alb.ingress.kubernetes.io/load-balancer-name: ingress-java-web-app
     alb.ingress.kubernetes.io/scheme: internet-facing

@@ -105,7 +105,7 @@ then
 fi
 
 
-############################################# Installing Action Runnder Controller 
+############################################# Installing Action Runner Controller SonarQube and Cert Manager
 if [[ ${github_runner} = 'true' ]]
 then
   
@@ -124,10 +124,15 @@ then
 
   helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
-  --create-namespace\
-  --version v1.14.0\
+  --create-namespace \
+  --version v1.14.0 \
   --set installCRDs=true
 
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "Cert Manager Deployment failed" >&2
+    exit 1
+  fi
   ### Deploying ARC Github Runner
   kubectl create ns actions
   kubectl apply -f github-action-runner/runner-secret.yaml
@@ -159,11 +164,30 @@ then
   fi
   ######## Deploying AWS Load Balancer Controller
   helm repo add eks https://aws.github.io/eks-charts
-  helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller -f ingress-nginx/aws-alb-ingress.yaml -n kube-system
-  kubectl apply -f ingress-nginx/ingress-class.yaml
+  helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller -f aws-lb-ingress/values.yaml -n kube-system
+  kubectl apply -f aws-lb-ingress/ingress-class.yaml
+  sleep 10
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "AWS Load Balancer Controller Deployment failed" >&2
+    exit 1
+  fi
 
+  # Deploying SonarQube with Postgress 
+  helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+  helm repo update
+  kubectl create namespace sonarqube
+  helm upgrade --install sonarqube sonarqube/sonarqube -f sonarqube/values.yaml -n sonarqube
+
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "SonarQube Deployment failed" >&2
+    exit 1
+  fi
+
+  # Deploying Web Application
   echo 'Deploying Web App'
   namespace=${app_name}
   kubectl create ns ${namespace}
-  helm upgrade --install ${app_name} ./helm_chart/${app_name} -n ${namespace}
+  helm upgrade --install ${app_name} ./Helm_Chart/${app_name} -n ${namespace}
 fi

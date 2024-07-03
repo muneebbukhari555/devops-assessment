@@ -1,4 +1,4 @@
-name: Java Web App Build and deploy to EKS
+name: Destroy Provisioned Private EKS Cluser & AWS Resources
 on: workflow_dispatch
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
