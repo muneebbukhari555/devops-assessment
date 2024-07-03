@@ -1,5 +1,5 @@
 name: Java Web App Build and deploy to EKS
-on:
+on: 
   push:
     tags:
       - 'v*'
@@ -18,13 +18,39 @@ env:
   ROLE_NAME: ${{ secrets.ROLE_NAME }}
 
 jobs:
-  build:
+  build_deploy:
     runs-on: eks_runner
     steps:
       # Checkout Code
       - name: Get code
         uses: actions/checkout@v4
       
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.14.0
+        with:
+          java-version: 21
+          java-distribution: temurin
+          maven-version: 3.9.8
+
+      # Building Mvn
+      - name: Build with Maven
+        run: mvn clean install -f pom.xml
+        working-directory: ${{ secrets.APP_NAME }}
+      
+      # SonarQube Analysis
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: ${{ secrets.APP_NAME }}/
+          args: >
+            -Dsonar.organization=rak-org
+            -Dsonar.projectKey=${{ secrets.APP_NAME }}
+            -Dsonar.java.binaries=target/classes
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      
+      # Building Docker Context
       - name: Set up Docker Context for Buildx
         id: buildx-context
         run: |

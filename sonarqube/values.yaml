@@ -16,7 +16,7 @@ ingress:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
     ## SSL Settings
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:637423397994:certificate/04b7c3cb-336c-4fff-8927-121d119d6656
+    alb.ingress.kubernetes.io/certificate-arn: <ACM Cert ARN>
     # SSL Redirect Setting
     alb.ingress.kubernetes.io/ssl-redirect: '443'
   hosts:

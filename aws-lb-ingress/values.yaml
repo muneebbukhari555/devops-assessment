@@ -8,7 +8,7 @@ serviceAccount:
   create: true
   # Annotations to add to the service account
   annotations:
-    eks.amazonaws.com/role-arn: "arn:aws:iam::637423397994:role/rak-prod-eksdemo-lbc-iam-role"
+    eks.amazonaws.com/role-arn: "arn:aws:iam::<Account_ID>:role/rak-prod-eksdemo-lbc-iam-role"
 
   # The name of the service account to use.
   name: aws-load-balancer-controller
@@ -18,4 +18,4 @@ serviceAccount:
 
 clusterName: "rak-prod-eksdemo"
 region: "us-east-1"
-vpcId: "vpc-0c29fe499e3c31eee"
+vpcId: "<VPC_ID>"
