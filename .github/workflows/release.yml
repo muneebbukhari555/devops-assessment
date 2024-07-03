@@ -1,0 +1,24 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - sonarqube-semantic-release-ci
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: eks_runner
+    steps:
+      - name: release-please
+        id: release
+        uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: simple
+          package-name: release
+          bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
+          token: ${{ secrets.PAT }}

@@ -1,14 +1,8 @@
 name: Java Web App Build and deploy to EKS
 on:
   push:
-    branches:
-      - sonarqube-semantic-release-ci
     tags:
       - 'v*'
-  # pull_request:
-  #   branches:
-  #     - 'master'
-
 
 # These permissions are needed to interact with GitHub's OIDC Token endpoint.
 permissions:
