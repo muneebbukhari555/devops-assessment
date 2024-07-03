@@ -47,4 +47,4 @@ jobs:
             -backend-config="key=${{env.TF_State_File_Key}}" \
             -backend-config="dynamodb_table=${{env.TF_STATE_DYNAMODB_TABLE}}"
       - name: Terraform Destroy
-        run: terraform destroy -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve
+        run: terraform destroy -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" -var="cluster_admin_user_arn=${{ secrets.CLUSTER_ADMIN_ARN }}"
