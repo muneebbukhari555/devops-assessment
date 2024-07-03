@@ -80,7 +80,6 @@ We are going to deploy access entry and policies using Terraform while provision
 
 All three modules are invoked in the main module located at the root directory of the Terraform configuration: main.tf.
 
-
 Sample tf var file that is used in our terraform apply: (Please edit as per required)
 ```t
 
