@@ -35,6 +35,7 @@ jobs:
       # Building Mvn
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify
+        working-directory: ${{ secrets.APP_NAME }}
       
       # SonarQube Analysis
       - name: SonarQube Scan
