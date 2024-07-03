@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/muneebbukhari555/devops-assessment/compare/v0.1.4...v0.2.0) (2024-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* adding files and testing Major release
+
+### Code Refactoring
+
+* adding files and testing Major release ([7754c86](https://github.com/muneebbukhari555/devops-assessment/commit/7754c86d39751ec19b0aeb8e726b2e2f907eead4))
+
 ## [0.1.4](https://github.com/muneebbukhari555/devops-assessment/compare/v0.1.3...v0.1.4) (2024-07-03)
 
 
