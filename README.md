@@ -280,7 +280,7 @@ Script will ask for:
 To Deploy Application manually using HELM CHART, use the bash Script  with flag -a. Java App required to expose using Ingress:
 - Aws-Load-Balancer-Controller (Ingress)
 
-For Deploying Aws-Load-Balancer-Controller edit the file located at: aws-ingress-nginx/aws-alb-ingress.yaml
+For Deploying Aws-Load-Balancer-Controller edit the file located at: aws-lb-ingress/values.yaml
 ```t
 image:
   repository: 602401143452.dkr.ecr.us-east-1.amazonaws.com/amazon/aws-load-balancer-controller
@@ -300,9 +300,44 @@ serviceAccount:
   # Automount API credentials for a Service Account.
   automountServiceAccountToken: true
 
-clusterName: "<ClusterName>" #rak-prod-eksdemo
-region: "us-east-1"
+clusterName: "<Cluster_Name>" #rak-prod-eksdemo
+region: "<Region_Name>>"
 vpcId: "<VPC_ID>>"
+```
+For Deploying SonarQube edit the file located at: sonarqube/values.yaml
+```t
+ingress:
+  enabled: true
+  # Used to create an Ingress record.
+  className: "ingress-external"
+  annotations: 
+    alb.ingress.kubernetes.io/load-balancer-name: eks-ingress-external
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # Health Check Settings
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-path: /app
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/success-codes: '200'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+    ## SSL Settings
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    alb.ingress.kubernetes.io/certificate-arn: <ACM Cert ARN>
+    # SSL Redirect Setting
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+  hosts:
+    - name: <hostname>
+      # Different clouds or configurations might need /* as the default path
+      path: /
+
+service:
+  type: NodePort
+
+postgresql:
+  persistence:
+    enabled: false
 ```
 Once the inputs are ready, executing a bash script will pick up the YAML files and deploy the Java application, making it accessible via an exposed Ingress to the internet
 
@@ -347,7 +382,7 @@ ingress:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
     ## SSL Settings
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:637423397994:certificate/04b7c3cb-336c-4fff-8927-121d119d6656
+    alb.ingress.kubernetes.io/certificate-arn: <ACM Cert ARN>
     #alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01 #Optional (Picks default if not used)    
     # SSL Redirect Setting
     alb.ingress.kubernetes.io/ssl-redirect: '443'   
@@ -379,7 +414,9 @@ Our GitHub CI/CD action workflow accomplishes several key tasks:
 1. Testing and Building a Docker image, pushing it to the Amazon Elastic Container Registry (ECR)
 2. Deploying application to an Amazon Elastic Kubernetes Service (EKS) cluster
 
-GitHub Actions YAML file provided: (.github/workflow/pipeline.yml)
+
+
+GitHub Actions YAML file provided: (.github/workflow/cicd-pipeline.yml)
 The pipeline is designed generically and utilizes repository secrets to facilitate CI/CD for any application. It require Repo secrets as below:
 - AWS_ACCOUNT_ID
 - AWS_REGION

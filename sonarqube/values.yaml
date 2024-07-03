@@ -22,7 +22,7 @@ ingress:
   hosts:
     - name: sonarqube.digitaldense.com
       # Different clouds or configurations might need /* as the default path
-      path: /
+      path: /*
 
 service:
   type: NodePort

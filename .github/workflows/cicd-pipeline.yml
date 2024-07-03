@@ -2,7 +2,7 @@ name: Java Web App Build and deploy to EKS
 on:
   push:
     branches:
-      - main
+      - sonarqube-semantic-release-ci
     tags:
       - 'v*'
   # pull_request:
