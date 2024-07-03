@@ -149,6 +149,17 @@ then
   # Runner Deployment 
   kubectl apply -f github-action-runner/runner-deployments.yaml
   kubectl apply -f github-action-runner/horizontal-scale-runner.yaml
+
+  ######## Deploying AWS Load Balancer Controller
+  helm repo add eks https://aws.github.io/eks-charts
+  helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller -f aws-lb-ingress/values.yaml -n kube-system
+  kubectl apply -f aws-lb-ingress/ingress-class.yaml
+  sleep 10
+  if [[ "${?}" -ne 0 ]]
+  then
+    echo "AWS Load Balancer Controller Deployment failed" >&2
+    exit 1
+  fi
 fi
 
 ############################################# Deploy Web App 
@@ -160,16 +171,6 @@ then
   if [[ "${?}" -ne 0 ]]
   then
     echo "Cluster Authentication failed" >&2
-    exit 1
-  fi
-  ######## Deploying AWS Load Balancer Controller
-  helm repo add eks https://aws.github.io/eks-charts
-  helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller -f aws-lb-ingress/values.yaml -n kube-system
-  kubectl apply -f aws-lb-ingress/ingress-class.yaml
-  sleep 10
-  if [[ "${?}" -ne 0 ]]
-  then
-    echo "AWS Load Balancer Controller Deployment failed" >&2
     exit 1
   fi
 

@@ -101,7 +101,7 @@ vpc_single_nat_gateway                 = true
 
 ### Bastion Host
 instance_type    = "t2.medium"
-instance_keypair = "eks-terraform-key"
+instance_keypair = "eks-terraform-key" # key pair shuold be present in AWS
 
 ### EKS Cluster
 cluster_name                    = "eksdemo"
@@ -116,8 +116,8 @@ scaling_min_size                = 1
 scaling_max_size                = 2
 aws_ecr_repository              = "java-web-app"
 repository_name                 = "muneebbukhari555/*"
-github_access_role_name         = "GitHub_Actions_CICD_Role"
-cluster_admin_user_arn          = "arn:aws:iam::<AccountID>>:user/<UserName>>"
+github_access_role_name         = "" 
+cluster_admin_user_arn          = "" #The value for this variable is provided by the Terraform CLI using the -var flag.
 
 ```
 **github_access_role_name** Terraform creates this role for GitHub to authenticate with AWS using OIDC, enabling access to AWS resources. This role is configured with appropriate policies to:
@@ -162,15 +162,16 @@ terraform init \
 
 terraform validate
 
-terraform plan -var-file=./env-tfvars/rak-prod-demo.tfvars
+terraform plan -var-file=./env-tfvars/rak-prod-demo.tfvars -var="aws_account_id=<Account_ID>" -var="cluster_admin_user_arn=<Principal _ARN>"
 
-terraform apply -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve
+terraform apply -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve -var="aws_account_id=<Account_ID>" -var="cluster_admin_user_arn=<Principal _ARN>"
 
 To Destroy Provisioned Cluster:
-terraform destroy -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve
+terraform destroy -var-file=./env-tfvars/rak-prod-demo.tfvars -auto-approve -var="aws_account_id=<Account_ID>" -var="cluster_admin_user_arn=<Principal _ARN>"
 ```
 ## Step-03: Bootstrap EKS cluster with Bash Script
-Note: To run script you need to configure AWS user: **aws configure** The principal executing the Bash script must have an IAM policy attached allowing them to assume  role used in script.
+Note: To run script follow the pre-requisites:
+1. Configure AWS user: **aws configure** The principal executing the Bash script must have an IAM policy attached allowing them to assume  role used in script.
 ```t
 {
     "Version": "2012-10-17",
@@ -183,32 +184,47 @@ Note: To run script you need to configure AWS user: **aws configure** The princi
     ]
 }
 ```
-Bash script is used to install utilities, set up a self-hosted GitHub Runner, Aws-Load-Balancer-Controller and deploy the app using specific flags.
+2. Bash script is used to install utilities, set up a self-hosted GitHub Runner, Aws-Load-Balancer-Controller and deploy the app using specific flags.
 Note: Run Bash Script with the root user privilege.
+3. Make sure cluster accessibility. Allow inbound traffic on port 443 in the EKS cluster security group, specifying the Bastion Security Group as the source. 
+4. Cluster_SG_Name: eks-cluster-sg-rak-prod-eksdemo-880488843
+5. Bastion_SG_Name: rak-prod-public-bastion-sg-20240703200759981400000004
 
 ```t
 ./cluster_bootstrap_script.sh -h -------> Show Help 
 ```
-**Installing utlities like  AWSCLI, Kubectl and HELM use the bash Script  with flag -i**
+**Installation of utlities like  AWSCLI, Kubectl and HELM use the bash Script  with flag -i**
 ```t
 ./cluster_bootstrap_script.sh -i
 ```
 
-**Installing Github Self Hosted Runner on EKS**
-After installing the required utilities, we can connect to the cluster and deploy applications using HELM charts. To leverage the GitHub Actions workflow, we also install a self-hosted EKS action runner.
+**Installation of Github Self Hosted Runner on EKS and Ingress Controller**
+After installing the required utilities, we can connect to the cluster and deploy applications using HELM charts. To leverage the GitHub Actions workflow, we also install a self-hosted EKS action runner. For setting a mechanism to authenticate the action runner controller with GitHub.
 
-We are now going to connect GitHub Personal Access Token (PAT) with our application to establish a connection between our repository and the EKS-deployed self-hosted runner. This process involves the following steps:
+Create a GitHub App for your organization, replace the ‘:org’ part of the following URL with your organization name before opening it. Then, enter any unique name in the “GitHub App name” field:
 
-Generate a GitHub PAT:
+Select the below-mentioned permission for this app and hit the “Create GitHub App” button at the bottom of the page to create a GitHub App.
 
-1. Go to your GitHub account settings.
-2. Navigate to Developer settings > Personal access tokens.
-3. Click Generate new token.
-4. Select the necessary scopes (permissions) for the token. 
-5. Typically, we do repo and workflow scopes.
-6. Generate the token and private key, along with the installation_id on the same browser page. Copy these securely and base64 encode them to store in the following file:
+Repository Permissions
 
-File location: github-action-runner/runner-secret.yaml
+- Actions (read only)
+- Administration (read and write)
+- Checks (read only)
+- Metadata (read only)
+- Pull requests (read only)
+
+Organization Permissions
+
+- Self-hosted runners (read/write)
+- Webhooks(read and write)
+
+You will get:
+1. An App ID on the page of the GitHub App you created.
+2. The private key file, Download it by pushing the “Generate a private key” button.
+3. Installation ID, after Installtion the last number of the URL will be used as the Installation ID  
+
+
+Input above three values in File located at: github-action-runner/runner-secret.yaml
 
 ```t
 apiVersion: v1
@@ -260,24 +276,10 @@ spec:
     repositoryNames:
     - muneebbukhari555/devops-assessment
 ```
-
-Once the inputs are ready run the script:
-```t
-./cluster_bootstrap_script.sh -g
-Script will ask for:
-1. AWS Region (e.ge us-east-1)
-2. Target Cluster Name (e.g rak-prod-eksdemo)
-3. Role ARN to Assume (arn:aws:iam::<Account_ID>>:role/GitHub_Actions_CICD_Role)
-```
-
-
-**GitHub_Actions_CICD_Role** is the same role, we created earlier using Trraform to provide Github permission. Now we Assume this role using bash Script and deploy application in our EKS cluster manually.
-
-**Installing Java Application on EKS**
-To Deploy Application manually using HELM CHART, use the bash Script  with flag -a. Java App required to expose using Ingress:
+Java App required to expose through Ingress:
 - Aws-Load-Balancer-Controller (Ingress)
 
-For Deploying Aws-Load-Balancer-Controller edit the file located at: aws-lb-ingress/values.yaml
+For the Deployment of Aws-Load-Balancer-Controller edit the file located at: aws-lb-ingress/values.yaml
 ```t
 image:
   repository: 602401143452.dkr.ecr.us-east-1.amazonaws.com/amazon/aws-load-balancer-controller
@@ -301,7 +303,21 @@ clusterName: "<Cluster_Name>" #rak-prod-eksdemo
 region: "<Region_Name>>"
 vpcId: "<VPC_ID>>"
 ```
-For Deploying SonarQube edit the file located at: sonarqube/values.yaml
+Once the inputs are ready run the script:
+```t
+./cluster_bootstrap_script.sh -g
+Script will ask for:
+1. AWS Region (e.ge us-east-1)
+2. Target Cluster Name (e.g rak-prod-eksdemo)
+3. Role ARN to Assume (arn:aws:iam::<Account_ID>>:role/GitHub_Actions_Role_NAME)
+```
+
+
+**GitHub_Actions_Role_NAME** is the same role, we created earlier using Trraform to provide Github permission. Now we Assume this role using bash Script and deploy application in our EKS cluster manually.
+
+**Installation of Java Application and Sonarqube Server on EKS:**
+To Deploy Application manually using HELM CHART, use the bash Script  with flag -a. 
+For Deployment of SonarQube edit the file located at: sonarqube/values.yaml
 ```t
 ingress:
   enabled: true
@@ -336,9 +352,9 @@ postgresql:
   persistence:
     enabled: false
 ```
-Once the inputs are ready, executing a bash script will pick up the YAML files and deploy the Java application, making it accessible via an exposed Ingress to the internet
+Edit the Ingress section and specify desired hostname to expose. Annotations are included to redirect traffic from port 80 to 443. Use the annotation alb.ingress.kubernetes.io/certificate-arn to attach the ACM certificate ARN for HTTPS exposure on port 443.
 
-APP Helm Chart values.yaml file:
+Java APP Helm Chart values.yaml file: Helm_Chart/java-web-app/values.yaml
 ```t
 # Default values for java-web-app.
 # This is a YAML-formatted file.
@@ -364,7 +380,7 @@ service:
 
 ingress:
   enabled: true
-  className: "rak-ingress"
+  className: "ingress-external"
   annotations:
     alb.ingress.kubernetes.io/load-balancer-name: ingress-java-web-app
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -394,6 +410,8 @@ ingress:
 
 ```
 Edit the Ingress section and specify desired hostname to expose. Annotations are included to redirect traffic from port 80 to 443. Use the annotation alb.ingress.kubernetes.io/certificate-arn to attach the ACM certificate ARN for HTTPS exposure on port 443.
+
+Once the inputs are ready, executing a bash script will pick up the YAML files and deploy the Java application, making it accessible via an exposed Ingress to the internet
 ```t
 ./cluster_bootstrap_script.sh -a
 Script will ask for:
@@ -402,7 +420,7 @@ Script will ask for:
 3. Role ARN to Assume (arn:aws:iam::<Account_ID>>:role/GitHub_Actions_CICD_Role)
 4. Application Name   (In our case java-web-app)
 ```
-
+**NOTE:** Initially Web APP will not get online as we don't have any registry image present in ECR. In step 4 we are going to use workflow to build and deploy Web APP Image.
 ## Step-04: Application CI/CD on EKS Cluster using GitHub Actions and Authenticate using RBAC and OIDC Provider
 
 GitHub Action - It's a tool provided by GitHub to automate tasks in our software development workflow. We can use it to build, test, and deploy our code automatically whenever there are changes made to our GitHub repository. These automated tasks are defined using YAML files called workflows.
