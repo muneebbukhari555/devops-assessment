@@ -322,7 +322,12 @@ Script will ask for:
 **GitHub_Actions_Role_NAME** is the same role, we created earlier using Trraform to provide Github permission. Now we Assume this role using bash Script and deploy application in our EKS cluster manually.
 
 **Installation of Java Application and Sonarqube Server on EKS:**
-To Deploy Application manually using HELM CHART, use the bash Script  with flag -a. 
+To Deploy Application manually using HELM CHART, use the bash Script  with flag -a.
+
+The application leverages SonarQube to ensure high code quality and maintainability. By integrating SonarQube into our development process, we automatically analyze our code for bugs, code smells, and security vulnerabilities. This continuous inspection helps us identify and address issues early, improving the overall reliability and security of our application. Using SonarQube, we maintain high standards, enhance our development efficiency, and deliver a robust product.
+
+
+
 For Deployment of SonarQube edit the file located at: sonarqube/values.yaml
 ```t
 ingress:
@@ -496,3 +501,7 @@ For Reference: https://www.conventionalcommits.org/en/v1.0.0/
   - **Build, tag, and push the image to Amazon ECR**: This step builds the Docker image, tags it, and pushes it to ECR.
   - **Update kube config**: Fetches the Kubernetes configuration to interact with the EKS cluster.
   - **Deploy to EKS**: This part of the script applies Kubernetes manifests to deploy the application in EKS using HELM. It replaces a placeholder (`IMAGE_TAG`) in the manifest with the actual image tag.
+
+![Java Web APP](doc/Java_Web_App.png)
+
+![SonarQube](images/SonarQube.png)
