@@ -276,8 +276,14 @@ spec:
     repositoryNames:
     - muneebbukhari555/devops-assessment
 ```
-Java App required to expose through Ingress:
-- Aws-Load-Balancer-Controller (Ingress)
+To expose a Java web application externally, an Ingress is required.
+
+**Aws-Load-Balancer-Controller (Ingress):**
+- Is a Kubernetes resource that defines the rules for routing external HTTP/S traffic to the appropriate services within your cluster.
+- This is a controller that integrates with Kubernetes to provision AWS resources such as Application Load Balancers (ALB) or Network Load Balancers (NLB) based on the ingress resources defined in the cluster.
+- It ensures that the ingress rules are translated into the appropriate configurations for the AWS load balancers.
+
+
 
 For the Deployment of Aws-Load-Balancer-Controller edit the file located at: aws-lb-ingress/values.yaml
 ```t
