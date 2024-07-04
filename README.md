@@ -502,6 +502,7 @@ For Reference: https://www.conventionalcommits.org/en/v1.0.0/
   - **Update kube config**: Fetches the Kubernetes configuration to interact with the EKS cluster.
   - **Deploy to EKS**: This part of the script applies Kubernetes manifests to deploy the application in EKS using HELM. It replaces a placeholder (`IMAGE_TAG`) in the manifest with the actual image tag.
 
+---
 ![Java Web APP](doc/Java_Web_App.png)
 
-![SonarQube](images/SonarQube.png)
+![SonarQube](doc/SonarQube.png)
