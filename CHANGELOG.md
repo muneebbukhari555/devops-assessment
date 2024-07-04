@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/muneebbukhari555/devops-assessment/compare/v1.0.0...v1.0.1) (2024-07-04)
+
+
+### Bug Fixes
+
+* Adding Images in README ([a5b53a4](https://github.com/muneebbukhari555/devops-assessment/commit/a5b53a4ccdd12c54ea4fc022d096be7e7d8bee4e))
+
 ## [1.0.0](https://github.com/muneebbukhari555/devops-assessment/compare/v0.3.0...v1.0.0) (2024-07-04)
 
 
