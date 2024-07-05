@@ -15,7 +15,7 @@ on:
         required: true
 
 jobs:
-  checkout_code:
+  Build_Push_Docker:
     runs-on: eks_runner
     steps:
       # Checkout Code
@@ -52,4 +52,4 @@ jobs:
           context: ${{secrets.APP_NAME}}/
           file: ${{secrets.APP_NAME}}/Dockerfile 
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}

@@ -22,6 +22,7 @@ jobs:
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   Login_AWS_OIDC:
+    needs: Quality_Check
     uses: ./.github/workflows/reusable_aws_oidc_login.yml
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -29,7 +30,7 @@ jobs:
       ROLE_NAME: ${{ secrets.ROLE_NAME }}
     
   Docker_build_push:
-    needs: Quality_Check
+    needs: Login_AWS_OIDC
     uses: ./.github/workflows/reusable_docker_build_push.yml
     secrets:
       APP_NAME: ${{ secrets.APP_NAME }}
