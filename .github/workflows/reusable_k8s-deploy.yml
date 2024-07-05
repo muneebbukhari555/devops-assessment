@@ -1,6 +1,12 @@
-name: k8s EKS deploy Resubale Workflow
+name: Resubale Workflow k8s EKS deploy
 on: 
   workflow_call:
+    inputs:
+      IMAGE_TAG:
+        description: Docker Image tag
+        required: true
+        type: string
+
     secrets:
       AWS_ACCOUNT_ID:
         description: AWS Account ID
@@ -54,7 +60,7 @@ jobs:
       # Deploying latest image to EKS Cluster
       - name: Deploy to EKS
         env:
-          IMAGE_TAG: ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
+          IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
         run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh

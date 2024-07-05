@@ -1,4 +1,4 @@
-name: Quality_Check Resubale Workflow
+name: Resubale Workflow Quality_Check
 on: 
   workflow_call:
     secrets:
