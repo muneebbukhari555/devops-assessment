@@ -9,16 +9,6 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
-  EKS_Cluster_Name: ${{ secrets.EKS_Cluster_Name }}
-  APP_NAME: ${{ secrets.APP_NAME }}
-  ROLE_NAME: ${{ secrets.ROLE_NAME }}
-
-
 jobs:
   checkout_code:
     uses: ./.github/workflows/reusable_checkout.yml
