@@ -15,7 +15,7 @@ on:
         required: true
 
 jobs:
-  checkout_code:
+  K8s_EKS_Deploy:
     runs-on: eks_runner
     steps:
       # Updating Kube Config File for target cluster

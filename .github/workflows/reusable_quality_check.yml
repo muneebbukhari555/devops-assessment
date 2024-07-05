@@ -15,7 +15,7 @@ on:
         required: true
         
 jobs:
-  checkout_code:
+  Quality_Check:
     runs-on: eks_runner
     steps:
       # Checkout Code
