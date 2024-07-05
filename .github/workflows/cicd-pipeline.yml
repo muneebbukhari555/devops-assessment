@@ -10,9 +10,11 @@ permissions:
   contents: read
 
 jobs:
+  # Checkout Code
   checkout_code:
     uses: ./.github/workflows/reusable_checkout.yml
-      
+  
+  # SonarQube Quality Check  
   Quality_Check:
     needs: checkout_code
     uses: ./.github/workflows/reusable_quality_check.yml
@@ -20,7 +22,8 @@ jobs:
       APP_NAME: ${{ secrets.APP_NAME }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-    
+  
+  # Building and Pushing Docker Image
   Docker_build_push:
     needs: Quality_Check
     uses: ./.github/workflows/reusable_docker_build_push.yml
@@ -30,7 +33,8 @@ jobs:
       ROLE_NAME: ${{ secrets.ROLE_NAME }}
       APP_NAME: ${{ secrets.APP_NAME }}
       ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-
+  
+  # Deployment of Application with latest Docker Image
   k8s-deploy:
     needs: Docker_build_push
     uses: ./.github/workflows/reusable_k8s-deploy.yml
