@@ -2,12 +2,21 @@ name: Build and Push Docker Resubale Workflow
 on: 
   workflow_call:
     secrets:
-      APP_NAME:
-        description: THe Name of Application
+      secrets:
+      AWS_ACCOUNT_ID:
+        description: AWS Account ID
         required: true
         
-      ECR_REGISTRY:
-        description: ECR Registry Name
+      AWS_REGION:
+        description: AWS Target Region
+        required: true
+        
+      ROLE_NAME:
+        description: Role Name to be Assumed
+        required: true
+        
+      APP_NAME:
+        description: THe Name of Application
         required: true
         
       ECR_REPOSITORY:
@@ -18,9 +27,17 @@ jobs:
   Build_Push_Docker:
     runs-on: eks_runner
     steps:
-      # Checkout Code
-      - name: Get code
-        uses: actions/checkout@v4
+      # AWS Authentication
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.ROLE_NAME }}
+          aws-region: ${{secrets.AWS_REGION}}
+  
+      # Login in Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       # Building Docker Context
       - name: Set up Docker Context for Buildx
@@ -41,7 +58,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{secrets.ECR_REGISTRY}}/${{secrets.ECR_REPOSITORY}}
+            ${{steps.login-ecr.outputs.registry}}/${{env.ECR_REPOSITORY}}
           tags: |
             type=semver,pattern={{version}}
       

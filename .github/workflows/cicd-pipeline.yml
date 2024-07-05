@@ -20,27 +20,23 @@ jobs:
       APP_NAME: ${{ secrets.APP_NAME }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-  Login_AWS_OIDC:
+    
+  Docker_build_push:
     needs: Quality_Check
-    uses: ./.github/workflows/reusable_aws_oidc_login.yml
+    uses: ./.github/workflows/reusable_docker_build_push.yml
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       ROLE_NAME: ${{ secrets.ROLE_NAME }}
-    
-  Docker_build_push:
-    needs: Login_AWS_OIDC
-    uses: ./.github/workflows/reusable_docker_build_push.yml
-    secrets:
       APP_NAME: ${{ secrets.APP_NAME }}
-      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
       ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
 
   k8s-deploy:
     needs: Docker_build_push
     uses: ./.github/workflows/reusable_k8s-deploy.yml
     secrets:
-      APP_NAME: ${{ secrets.APP_NAME }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      ROLE_NAME: ${{ secrets.ROLE_NAME }}
+      APP_NAME: ${{ secrets.APP_NAME }}
       EKS_Cluster_Name: ${{ secrets.EKS_Cluster_Name }}

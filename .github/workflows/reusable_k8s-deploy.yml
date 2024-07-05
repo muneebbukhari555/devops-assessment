@@ -2,12 +2,20 @@ name: k8s EKS deploy Resubale Workflow
 on: 
   workflow_call:
     secrets:
-      APP_NAME:
-        description: THe Name of Application
+      AWS_ACCOUNT_ID:
+        description: AWS Account ID
         required: true
         
       AWS_REGION:
         description: AWS Target Region
+        required: true
+        
+      ROLE_NAME:
+        description: Role Name to be Assumed
+        required: true
+
+      APP_NAME:
+        description: THe Name of Application
         required: true
         
       EKS_Cluster_Name:
@@ -18,6 +26,13 @@ jobs:
   K8s_EKS_Deploy:
     runs-on: eks_runner
     steps:
+      # AWS Authentication
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.ROLE_NAME }}
+          aws-region: ${{secrets.AWS_REGION}}
+
       # Updating Kube Config File for target cluster
       - name: Update kubeconfig
         run: |
