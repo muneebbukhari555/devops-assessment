@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.1.0...v1.2.0) (2024-07-05)
+
+
+### Features
+
+* Updating Docker Image tag ([d786749](https://github.com/muneebbukhari555/devops-assessment/commit/d7867490eef27fafeb80381a9423d728faa83819))
+
 ## [1.1.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.0.1...v1.1.0) (2024-07-05)
 
 
