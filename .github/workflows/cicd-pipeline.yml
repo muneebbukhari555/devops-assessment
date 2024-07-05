@@ -9,116 +9,37 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
-  EKS_Cluster_Name: ${{ secrets.EKS_Cluster_Name }}
-  APP_NAME: ${{ secrets.APP_NAME }}
-  ROLE_NAME: ${{ secrets.ROLE_NAME }}
-
 jobs:
-  build_deploy:
-    runs-on: eks_runner
-    steps:
-      # Checkout Code
-      - name: Get code
-        uses: actions/checkout@v4
+  checkout_code:
+    uses: ./.github/workflows/reusable_checkout.yml
       
-      - name: Setup Maven Action
-        uses: s4u/setup-maven-action@v1.14.0
-        with:
-          java-version: 21
-          java-distribution: temurin
-          maven-version: 3.9.8
+  Quality_Check:
+    needs: checkout_code
+    uses: ./.github/workflows/reusable_quality_check.yml
+    secrets:
+      APP_NAME: ${{ secrets.APP_NAME }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # Building Mvn
-      - name: Build with Maven
-        run: mvn clean install -f pom.xml
-        working-directory: ${{ secrets.APP_NAME }}
-      
-      # SonarQube Analysis
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          projectBaseDir: ${{ secrets.APP_NAME }}/
-          args: >
-            -Dsonar.organization=rak-org
-            -Dsonar.projectKey=${{ secrets.APP_NAME }}
-            -Dsonar.java.binaries=target/classes
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      
-      # Building Docker Context
-      - name: Set up Docker Context for Buildx
-        id: buildx-context
-        run: |
-          docker context create builders
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          version: latest
-          endpoint: builders
-        
-      # AWS Authentication
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.ROLE_NAME }}
-          aws-region: ${{env.AWS_REGION}}
-      
-      # Login in Amazon ECR
-      - name: Log in to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      
-      
-      # Docker Image MetaData    
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{steps.login-ecr.outputs.registry}}/${{env.ECR_REPOSITORY}}
-          tags: |
-            type=semver,pattern={{version}}
-      
-      # Build, tag, and push docker image to Amazon ECR
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{env.APP_NAME}}/
-          file: ${{env.APP_NAME}}/Dockerfile 
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
+  Login_AWS_OIDC:
+    uses: ./.github/workflows/reusable_aws_oidc_login.yml
+    secrets:
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ROLE_NAME: ${{ secrets.ROLE_NAME }}
+    
+  Docker_build_push:
+    needs: Quality_Check
+    uses: ./.github/workflows/reusable_docker_build_push.yml
+    secrets:
+      APP_NAME: ${{ secrets.APP_NAME }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
 
-      # Updating Kube Config File for target cluster
-      - name: Update kubeconfig
-        run: |
-          sudo apt install unzip -y
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-          
-          sudo ./aws/install
-          aws eks update-kubeconfig --name ${{env.EKS_Cluster_Name}} --region ${{ env.AWS_REGION }}
-      
-      # Deploying latest image to EKS Cluster
-      - name: Deploy to EKS
-        env:
-          IMAGE_TAG: ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-
-          sed -i.bak "s/IMAGE_TAG/$IMAGE_TAG/g" Helm_Chart/${{env.APP_NAME}}/values.yaml
-          helm upgrade --install ${{env.APP_NAME}} \
-          --namespace ${{env.APP_NAME}} \
-          --create-namespace \
-          ./Helm_Chart/${{env.APP_NAME}}
+  k8s-deploy:
+    needs: Docker_build_push
+    uses: ./.github/workflows/reusable_k8s-deploy.yml
+    secrets:
+      APP_NAME: ${{ secrets.APP_NAME }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      EKS_Cluster_Name: ${{ secrets.EKS_Cluster_Name }}
