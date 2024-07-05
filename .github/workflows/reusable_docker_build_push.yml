@@ -61,7 +61,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{steps.login-ecr.outputs.registry}}/${{env.ECR_REPOSITORY}}
+            ${{steps.login-ecr.outputs.registry}}/${{secrets.ECR_REPOSITORY}}
           tags: |
             type=semver,pattern={{version}}
       
@@ -72,4 +72,4 @@ jobs:
           context: ${{secrets.APP_NAME}}/
           file: ${{secrets.APP_NAME}}/Dockerfile 
           push: true
-          tags: ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}
