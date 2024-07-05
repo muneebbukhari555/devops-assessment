@@ -1,0 +1,48 @@
+name: k8s EKS deploy Resubale Workflow
+on: 
+  workflow_call:
+    secrets:
+      APP_NAME:
+        description: THe Name of Application
+        required: true
+        
+      AWS_REGION:
+        description: AWS Target Region
+        required: true
+        
+      EKS_Cluster_Name:
+        description: Target EKS Cluster Name
+        required: true
+
+jobs:
+  checkout_code:
+    runs-on: eks_runner
+    steps:
+      # Updating Kube Config File for target cluster
+      - name: Update kubeconfig
+        run: |
+          sudo apt install unzip -y
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          
+          sudo ./aws/install
+          aws eks update-kubeconfig --name ${{ secrets.EKS_Cluster_Name }} --region ${{ secrets.AWS_REGION }}
+    
+      # Deploying latest image to EKS Cluster
+      - name: Deploy to EKS
+        env:
+          IMAGE_TAG: ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+          sed -i.bak "s/IMAGE_TAG/$IMAGE_TAG/g" Helm_Chart/${{secrets.APP_NAME}}/values.yaml
+          helm upgrade --install ${{secrets.APP_NAME}} \
+          --namespace ${{secrets.APP_NAME}} \
+          --create-namespace \
+          ./Helm_Chart/${{secrets.APP_NAME}}

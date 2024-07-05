@@ -1,0 +1,10 @@
+name: Checkout Resubale Workflow
+on: workflow_call
+
+jobs:
+  checkout_code:
+    runs-on: eks_runner
+    steps:
+      # Checkout Code
+      - name: Get code
+        uses: actions/checkout@v4

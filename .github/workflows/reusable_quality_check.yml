@@ -1,0 +1,48 @@
+name: Quality_Check Resubale Workflow
+on: 
+  workflow_call:
+    secrets:
+      APP_NAME:
+        description: THe Name of Application
+        required: true
+        
+      SONAR_TOKEN:
+        description: SonarQube Token
+        required: true
+        
+      SONAR_HOST_URL:
+        description: SonarQube Host URL
+        required: true
+        
+jobs:
+  checkout_code:
+    runs-on: eks_runner
+    steps:
+      # Checkout Code
+      - name: Get code
+        uses: actions/checkout@v4
+        
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.14.0
+        with:
+          java-version: 21
+          java-distribution: temurin
+          maven-version: 3.9.8
+
+      # Building Mvn
+      - name: Build with Maven
+        run: mvn clean install -f pom.xml
+        working-directory: ${{ secrets.APP_NAME }}
+      
+      # SonarQube Analysis
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: ${{ secrets.APP_NAME }}/
+          args: >
+            -Dsonar.organization=rak-org
+            -Dsonar.projectKey=${{ secrets.APP_NAME }}
+            -Dsonar.java.binaries=target/classes
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
