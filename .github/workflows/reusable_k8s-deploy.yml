@@ -26,6 +26,10 @@ jobs:
   K8s_EKS_Deploy:
     runs-on: eks_runner
     steps:
+      # Checkout Code
+      - name: Get code
+        uses: actions/checkout@v4
+        
       # AWS Authentication
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
