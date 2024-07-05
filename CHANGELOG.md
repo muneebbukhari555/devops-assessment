@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.2.0...v1.3.0) (2024-07-05)
+
+
+### Features
+
+* Fixing Docker Access issue ([3da0825](https://github.com/muneebbukhari555/devops-assessment/commit/3da0825d8d5d8df4873315de2742b4451b518776))
+* Fixing Docker Access issue ([4324916](https://github.com/muneebbukhari555/devops-assessment/commit/43249166cf1c5e00b82f87a812e0718f83607af8))
+
 ## [1.2.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.1.0...v1.2.0) (2024-07-05)
 
 
