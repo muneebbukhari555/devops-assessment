@@ -1,6 +1,6 @@
 fileignoreconfig:
-- filename: .github/workflows/reusable_quality_check.yml
-  checksum: e7bff54dc62b578bafb5e6bf0c6fa778e28de8d951902c67bbbcfa428dcab36d
-- filename: .github/workflows/reusable_aws_oidc_login.yml
-  checksum: 16722cb35df87c1fc591e7040ed3e262f25d147aa9cc99935a9adfa44e788f7e
+- filename: .github/workflows/reusable_docker_build_push.yml
+  checksum: f4a87ff137d77f65d1bf0ff0e5aadd7cf78513c797eb2a1ca4418bced8c83f5f
+- filename: .github/workflows/reusable_k8s-deploy.yml
+  checksum: e67710704f8a66e0dfbcb086de164bf0074aecd9fe18f5839292688e51d66ec8
 version: ""
