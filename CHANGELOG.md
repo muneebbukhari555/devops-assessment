@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.0.1...v1.1.0) (2024-07-05)
+
+
+### Features
+
+* segrating segregate ([07d0475](https://github.com/muneebbukhari555/devops-assessment/commit/07d0475757f68ee931dfe5649362368bacea2a91))
+* segrating segregate ([782c2cb](https://github.com/muneebbukhari555/devops-assessment/commit/782c2cb9f52cf77cf36c50e3a9e380769a1d21ca))
+
 ## [1.0.1](https://github.com/muneebbukhari555/devops-assessment/compare/v1.0.0...v1.0.1) (2024-07-04)
 
 
