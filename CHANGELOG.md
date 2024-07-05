@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.3.0...v1.4.0) (2024-07-05)
+
+
+### Features
+
+* Fixing Checkout stage in reusable workflow ([2a46cf7](https://github.com/muneebbukhari555/devops-assessment/commit/2a46cf7f5b4269e8adc2f5eb8996db0cb6598384))
+
 ## [1.3.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.2.0...v1.3.0) (2024-07-05)
 
 
