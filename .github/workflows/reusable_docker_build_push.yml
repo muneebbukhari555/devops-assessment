@@ -75,7 +75,7 @@ jobs:
       
       - name: Set Image Tag
         id: image-tag
-        run: echo "TAG_METADATA=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}"" >> $GITHUB_OUTPUT
+        run: echo "TAG_METADATA=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
       
       # Build, tag, and push docker image to Amazon ECR
       - name: Build and push
