@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.7.0...v2.0.0) (2024-07-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Finalising CICD for PR merge
+
+### Features
+
+* Finalising CICD for PR merge ([fa5b083](https://github.com/muneebbukhari555/devops-assessment/commit/fa5b0836a683e02f7b9271b4d3992997112114f4))
+
 ## [1.7.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.6.0...v1.7.0) (2024-07-05)
 
 
