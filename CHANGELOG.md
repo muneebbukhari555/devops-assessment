@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.4.0...v1.5.0) (2024-07-05)
+
+
+### Features
+
+* Fixing ECR Image Repo Var for auth with oidc ([d56b785](https://github.com/muneebbukhari555/devops-assessment/commit/d56b785b76318cdf9a5268b17e0b09fdd9cada70))
+
 ## [1.4.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.3.0...v1.4.0) (2024-07-05)
 
 
