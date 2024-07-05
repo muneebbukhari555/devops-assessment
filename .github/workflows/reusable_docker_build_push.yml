@@ -1,4 +1,4 @@
-name: Build and Push Docker Resubale Workflow
+name: Resubale Workflow Build and Push Docker
 on: 
   workflow_call:
     secrets:
@@ -22,9 +22,17 @@ on:
       ECR_REPOSITORY:
         description: ECR Repository Name
         required: true
+    outputs:
+      IMAGE_TAG_Deploy:
+        description: Image Tag to be deployed
+        value: ${{jobs.Build_Push_Docker.outputs.IMAGE_TAG}}
+      
 
 jobs:
   Build_Push_Docker:
+    outputs:
+      IMAGE_TAG: ${{steps.image-tag.outputs.TAG_METADATA}}
+      
     runs-on: eks_runner
     steps:
       # Checkout Code
@@ -64,6 +72,10 @@ jobs:
             ${{steps.login-ecr.outputs.registry}}/${{secrets.ECR_REPOSITORY}}
           tags: |
             type=semver,pattern={{version}}
+      
+      - name: Set Image Tag
+        id: image-tag
+        run: echo "TAG_METADATA=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}"" >> $GITHUB_OUTPUT
       
       # Build, tag, and push docker image to Amazon ECR
       - name: Build and push

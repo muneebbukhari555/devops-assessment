@@ -1,4 +1,4 @@
-name: Checkout Resubale Workflow
+name: Resubale Workflow Checkout
 on: workflow_call
 
 jobs:

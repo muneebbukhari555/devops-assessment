@@ -1,4 +1,4 @@
-name: Java Web App
+name: Java Web App Build and Deploy
 on: 
   push:
     tags:
@@ -34,6 +34,8 @@ jobs:
   k8s-deploy:
     needs: Docker_build_push
     uses: ./.github/workflows/reusable_k8s-deploy.yml
+    with:
+      IMAGE_TAG: ${{needs.Docker_build_push.outputs.IMAGE_TAG_Deploy}}
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
