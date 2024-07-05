@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.5.0...v1.6.0) (2024-07-05)
+
+
+### Features
+
+* Configuring Image TAG for deployment ([574c438](https://github.com/muneebbukhari555/devops-assessment/commit/574c438dabcc0cf2d9ad02f06e3c1e5852528b5c))
+
 ## [1.5.0](https://github.com/muneebbukhari555/devops-assessment/compare/v1.4.0...v1.5.0) (2024-07-05)
 
 
