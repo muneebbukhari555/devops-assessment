@@ -16,7 +16,7 @@ Deploying a Java Application to AWS EKS using GitHub Actions and IAC with Terraf
 We’ll break down each step in the following order:
 
 1. Create Prerequisites with CloudFormation: Use a CloudFormation Stack to create prerequisites for Terraform EKS provisioning, such as Bitbucket, GitHub OIDC, IAM Role, and DynamoDB.
-
+ 
 2. Provision EKS Cluster with GitHub Workflow: Use a GitHub Workflow pipeline to provision a Private Endpoint EKS Cluster using Terraform.
 
 3. Bootstrap EKS Cluster: Preparing the EKS cluster with a Bash script to install Ingress and the GitHub Runner Self-hosted Controller for App CI/CD.
